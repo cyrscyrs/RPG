@@ -1,9 +1,18 @@
-# This .gitignore file should be placed at the root of your Unity project directory
+# Unity .gitignore - RPG-01 (Unity 2021.3.45f2c1)
 #
-# Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
+# Based on the official template:
+# https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-# Recommended: add any editor/OS/tool-specific ignore rules from the Global/ templates as needed.
-# See: https://github.com/github/gitignore/tree/main/Global
+# Keep this file limited to Unity- and tool-generated output. Everything the
+# project actually needs in order to build must stay tracked:
+#   Assets/, Packages/ (manifest.json + packages-lock.json), ProjectSettings/
+#
+# Note: ignore rules never apply to files that are already tracked. If one of
+# the folders below still shows up in `git status`, it has to be untracked
+# once, for example:
+#   git rm -r --cached -- Library Build Logs obj UserSettings .vs
+#   git rm --cached -- Assembly-CSharp.csproj RPG-01.sln
+# (that only removes them from the index; the files stay on disk)
 #
 .utmp/
 /[Ll]ibrary/
@@ -104,3 +113,17 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# --------------------------------------------------------------------------
+# Project-specific additions (RPG-01)
+# --------------------------------------------------------------------------
+
+# IDE project folders created by the editors this project uses
+# (Rider via com.unity.ide.rider, VS Code via com.unity.ide.vscode).
+# These are per-developer files, so keep them out of the repository.
+# Note: .vsconfig stays tracked on purpose - it is meant to be shared.
+/.idea/
+/.vscode/
+
+# Local / CI player builds land in subfolders of the build output folder
+/[Bb]uild/[Bb]uilds/
