@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -249,7 +249,7 @@ public class Inventory : MonoBehaviour, ISaveManager
     {
         if (inventory.Count >= inventoryItemSlot.Length)
         {
-            //Debug.Log("²Ö¿â¿Õ¼ä²»×ã");
+            //Debug.Log("ä»“åº“ç©ºé—´ä¸è¶³");
             return false;
         }
 
@@ -325,7 +325,7 @@ public class Inventory : MonoBehaviour, ISaveManager
         }
         else
         {
-            Debug.Log("ÑªÆ¿ÀäÈ´ÖĞ");
+            Debug.Log("è¡€ç“¶å†·å´ä¸­");
         }
     }
 
@@ -342,7 +342,7 @@ public class Inventory : MonoBehaviour, ISaveManager
             return true;
         }
 
-        Debug.Log("×°¼×ÀäÈ´ÖĞ");
+        Debug.Log("è£…ç”²å†·å´ä¸­");
         return false;
     }
 

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -49,7 +49,7 @@ public class SaveManager : MonoBehaviour
 
         if(this.gameData == null)
         {
-            Debug.Log("Ã»ÓÐ´æµµ£¬ÎÞ·¨¼ÓÔØ");
+            Debug.Log("æ²¡æœ‰å­˜æ¡£ï¼Œæ— æ³•åŠ è½½");
             NewGame();
         }
 

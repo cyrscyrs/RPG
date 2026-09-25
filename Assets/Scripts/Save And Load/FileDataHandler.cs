@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -42,7 +42,7 @@ public class FileDataHandler
         }
         catch(Exception e)
         {
-            Debug.LogError("³¢ÊÔ±£´æÎÄ¼ş£º" + fullPath + "\nÊ±·¢Éú´íÎó£º" + e);
+            Debug.LogError("å°è¯•ä¿å­˜æ–‡ä»¶ï¼š" + fullPath + "\næ—¶å‘ç”Ÿé”™è¯¯ï¼š" + e);
         }
     }
 
@@ -72,7 +72,7 @@ public class FileDataHandler
             }
             catch(Exception e )
             {
-                Debug.LogError("³¢ÊÔ¶ÁÈ¡ÎÄ¼ş£º" + fullPath + "\nÊ±·¢Éú´íÎó£º" + e);
+                Debug.LogError("å°è¯•è¯»å–æ–‡ä»¶ï¼š" + fullPath + "\næ—¶å‘ç”Ÿé”™è¯¯ï¼š" + e);
             }
         }
 

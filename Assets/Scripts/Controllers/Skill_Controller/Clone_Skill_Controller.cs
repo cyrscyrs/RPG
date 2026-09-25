@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -96,7 +96,7 @@ public class Clone_Skill_Controller : MonoBehaviour
     {
         
 
-        //克隆初始面向右，敌人在克隆的左侧的时候要翻转
+        //鍏嬮殕鍒濆闈㈠悜鍙筹紝鏁屼汉鍦ㄥ厠闅嗙殑宸︿晶鐨勬椂鍊欒缈昏浆
         if(closestEnemy != null)
         {
             if (transform.position.x > closestEnemy.position.x)

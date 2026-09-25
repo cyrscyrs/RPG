@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,7 +33,7 @@ public class Blackhole_Skill : Skill
 
         currentBlackhole.SetupBlackhole(maxSize, growSpeed, shrinkSpeed, amountOfAttacks, cloneAttackCoolDown, blackholeDuration);
 
-        //�d�⣡
+        //卍解！
         //AudioManager.instance.PlaySFX(3, player.transform);
         AudioManager.instance.PlaySFX(6, player.transform);
     }

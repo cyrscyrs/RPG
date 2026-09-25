@@ -43,7 +43,14 @@ public class EntityFX : MonoBehaviour
         originalMat = sr.material;
         player = PlayerManager.instance.player;
 
-        myHealthBar = GetComponentInChildren<UI_HealthBar>().gameObject;
+        // The status UI stays inactive until it is needed, and GetComponentInChildren
+        // skips inactive children unless includeInactive is true.
+        UI_HealthBar healthBar = GetComponentInChildren<UI_HealthBar>(true);
+
+        if (healthBar != null)
+            myHealthBar = healthBar.gameObject;
+        else
+            Debug.LogWarning(name + " has no UI_HealthBar in its children.", this);
     }
 
 
@@ -63,16 +70,10 @@ public class EntityFX : MonoBehaviour
 
     public void MakeTransparent(bool _transparent)
     {
-        if (_transparent)
-        {
-            myHealthBar.SetActive(false);
-            sr.color = Color.clear;
-        }
-        else
-        {
-            myHealthBar.SetActive(true);
-            sr.color = Color.white;
-        }
+        if (myHealthBar != null)
+            myHealthBar.SetActive(!_transparent);
+
+        sr.color = _transparent ? Color.clear : Color.white;
     }
 
     private IEnumerator FlashFX()

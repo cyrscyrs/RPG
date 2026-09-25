@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ public class Enemy_Archer : Enemy
 
     public Vector2 jumpVelocity;
     public float jumpCooldown;
-    public float safeDistance; //¹­¼ıÊÖÓëÍæ¼ÒµÄ¾àÀëµÍÓÚ´ËÖµÊ±£¬³¢ÊÔºóÌø
+    public float safeDistance; //å¼“ç®­æ‰‹ä¸ç©å®¶çš„è·ç¦»ä½äºæ­¤å€¼æ—¶ï¼Œå°è¯•åè·³
     [HideInInspector] public float lastTimeJumped;
 
     [Header("Addtional collsion check")]

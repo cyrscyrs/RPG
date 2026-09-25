@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -58,7 +58,7 @@ public class UI : MonoBehaviour, ISaveManager
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            //·ÀÖ¹µ­ÈëÐ§¹ûÊ§Ð§
+            //é˜²æ­¢æ·¡å…¥æ•ˆæžœå¤±æ•ˆ
             bool fadeScreen = transform.GetChild(i).GetComponent<UI_FadeScreen>() != null;
 
             if (fadeScreen == false)

@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -92,7 +92,7 @@ public class Entity : MonoBehaviour
 
         float xOffset = Random.Range(knockbackOffset.x, knockbackOffset.y);
 
-        //if(knockbackPower.x > 0 || knockbackPower.y > 0) //不加if语句可以增加人物受击硬直效果
+        //if(knockbackPower.x > 0 || knockbackPower.y > 0) //涓嶅姞if璇彞鍙互澧炲姞浜虹墿鍙楀嚮纭洿鏁堟灉
         rb.velocity = new Vector2((knockbackPower.x + xOffset) * knockbackDir, knockbackPower.y);
 
         yield return new WaitForSeconds(knockbackDuration);
@@ -155,7 +155,7 @@ public class Entity : MonoBehaviour
     public virtual void SetupDefaultFacingDir(int _direction)
     {
         facingDir = _direction;
-        if (facingDir == -1)//朝左
+        if (facingDir == -1)//鏈濆乏
             facingRight = false;
     }
 

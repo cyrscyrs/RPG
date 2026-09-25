@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,7 +37,7 @@ public class Crystal_Skill : Skill
     [SerializeField]private float refillTimer;
     [SerializeField] private List<GameObject> crystalList = new List<GameObject>();
 
-    //ÈÈ¸üĞÂ
+    //çƒ­æ›´æ–°
     [SerializeField]
     private AssetReference crystalReference;
 
@@ -51,10 +51,11 @@ public class Crystal_Skill : Skill
         unlockMovingCrystalButton.GetComponent<Button>().onClick.AddListener(UnlockMovingCrystal);
         unlockMultiStackButton.GetComponent<Button>().onClick.AddListener(UnlockMultiStack);
 
-        crystalReference.InstantiateAsync().Completed += (Handheld) => Debug.Log("done");
+        if (crystalReference.RuntimeKeyIsValid())
+            crystalReference.InstantiateAsync().Completed += (Handheld) => Debug.Log("done");
     }
 
-    #region ¼¼ÄÜ½âËø
+    #region æŠ€èƒ½è§£é”
 
     protected override void CheckUnlock()
     {

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,7 +30,7 @@ public class PlayerGroundedState : PlayerState
         {
             if(player.skill.blackhole.cooldownTimer > 0)
             {
-                player.fx.CreatePopUpText("¼¼ÄÜÀäÈ´ÖĞ");
+                player.fx.CreatePopUpText("æŠ€èƒ½å†·å´ä¸­");
                 return;
             }
 

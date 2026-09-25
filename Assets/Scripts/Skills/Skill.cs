@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +27,7 @@ public class Skill : MonoBehaviour
             cooldownTimer = cooldown;
             return true;
         }
-        player.fx.CreatePopUpText("¼¼ÄÜÀäÈ´ÖĞ");
+        player.fx.CreatePopUpText("æŠ€èƒ½å†·å´ä¸­");
         return false;
     }
 

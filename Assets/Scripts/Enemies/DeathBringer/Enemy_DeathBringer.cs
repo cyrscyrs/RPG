@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -79,7 +79,7 @@ public class Enemy_DeathBringer : Enemy
         float y = Random.Range(arena.bounds.min.y + 3, arena.bounds.max.y - 3);
 
         transform.position = new Vector3(x, y);
-        //ÎªÁË´«ËÍºóÄÜÕ¾ÔÚµØÃæÉÏ
+        //ä¸ºäº†ä¼ é€åŽèƒ½ç«™åœ¨åœ°é¢ä¸Š
         transform.position = new Vector3(transform.position.x, transform.position.y - GroundBelow().distance + (cd.size.y / 2));
 
         if(!GroundBelow() || SomethingIsAround())
@@ -88,9 +88,9 @@ public class Enemy_DeathBringer : Enemy
         }
     }
 
-    //·ÀÖ¹´«ËÍµ½·ÇµØÃæ
+    //é˜²æ­¢ä¼ é€åˆ°éžåœ°é¢
     private RaycastHit2D GroundBelow() => Physics2D.Raycast(transform.position, Vector2.down, 100, whatIsGround);
-    //·ÀÖ¹´«ËÍµ½Ç½Àï
+    //é˜²æ­¢ä¼ é€åˆ°å¢™é‡Œ
     private bool SomethingIsAround() => Physics2D.BoxCast(transform.position, surroundingCheckSize, 0, Vector2.zero, 0, whatIsGround);
 
     protected override void OnDrawGizmos()

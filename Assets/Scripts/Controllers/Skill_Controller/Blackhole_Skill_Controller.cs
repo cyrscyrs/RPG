@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,7 +47,7 @@ public class Blackhole_Skill_Controller : MonoBehaviour
 
         if(blackholeTimer < 0 )
         {
-            //·ÀÖ¹ÖØ¸´Ö´ÐÐ
+            //é˜²æ­¢é‡å¤æ‰§è¡Œ
             blackholeTimer = Mathf.Infinity;
 
             if(targets.Count > 0)

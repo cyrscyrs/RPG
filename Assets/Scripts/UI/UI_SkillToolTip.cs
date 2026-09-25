@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,7 +13,7 @@ public class UI_SkillToolTip : MonoBehaviour
     {
         skillDescription.text = _description;
         skillName.text = _name;
-        skillCost.text = "ѧϰ�ɱ�: " + _cost.ToString();
+        skillCost.text = "学习成本: " + _cost.ToString();
         gameObject.SetActive(true);
     }
 

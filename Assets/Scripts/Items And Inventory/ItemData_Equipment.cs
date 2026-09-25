@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -58,10 +58,10 @@ public class ItemData_Equipment : ItemData
     {
         return equipmentType switch
         {
-            EquipmentType.Weapon => "ÎäÆ÷",
-            EquipmentType.Armor => "ÒÂ·þ",
-            EquipmentType.Amulet => "»¤·û",
-            EquipmentType.Flask => "ÑªÆ¿",
+            EquipmentType.Weapon => "æ­¦å™¨",
+            EquipmentType.Armor => "è¡£æœ",
+            EquipmentType.Amulet => "æŠ¤ç¬¦",
+            EquipmentType.Flask => "è¡€ç“¶",
             _ => ""
         };
     }
@@ -116,23 +116,23 @@ public class ItemData_Equipment : ItemData
         sb.Length = 0;
         descriptionLength = 0;
 
-        AddItemDescription(strength, "Á¦Á¿");
-        AddItemDescription(agility, "Ãô½Ý");
-        AddItemDescription(intelligence, "ÖÇÁ¦");
-        AddItemDescription(vitality, "ÌåÖÊ");
+        AddItemDescription(strength, "åŠ›é‡");
+        AddItemDescription(agility, "æ•æ·");
+        AddItemDescription(intelligence, "æ™ºåŠ›");
+        AddItemDescription(vitality, "ä½“è´¨");
 
-        AddItemDescription(damage, "¹¥»÷Á¦");
-        AddItemDescription(critChance, "±©»÷");
-        AddItemDescription(critPower, "±¬ÉË");
+        AddItemDescription(damage, "æ”»å‡»åŠ›");
+        AddItemDescription(critChance, "æš´å‡»");
+        AddItemDescription(critPower, "çˆ†ä¼¤");
 
-        AddItemDescription(health, "ÉúÃü");
-        AddItemDescription(evasion, "ÉÁ±Ü");
-        AddItemDescription(armor, "»¤¼×");
-        AddItemDescription(magicResistance, "Ä§¿¹");
+        AddItemDescription(health, "ç”Ÿå‘½");
+        AddItemDescription(evasion, "é—ªé¿");
+        AddItemDescription(armor, "æŠ¤ç”²");
+        AddItemDescription(magicResistance, "é­”æŠ—");
 
-        AddItemDescription(fireDamage, "»ðÉË");
-        AddItemDescription(iceDamage, "±ùÉË");
-        AddItemDescription(lightningDamage, "À×ÉË");
+        AddItemDescription(fireDamage, "ç«ä¼¤");
+        AddItemDescription(iceDamage, "å†°ä¼¤");
+        AddItemDescription(lightningDamage, "é›·ä¼¤");
 
 
 
@@ -143,7 +143,7 @@ public class ItemData_Equipment : ItemData
             if (itemEffects[i].effectDescription.Length > 0)
             {
                 sb.AppendLine();
-                sb.AppendLine("Î¨Ò»: " + itemEffects[i].effectDescription);
+                sb.AppendLine("å”¯ä¸€: " + itemEffects[i].effectDescription);
                 descriptionLength++;
             }
         }

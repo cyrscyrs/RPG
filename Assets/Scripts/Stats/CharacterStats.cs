@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 
@@ -24,10 +24,10 @@ public class CharacterStats : MonoBehaviour
     public EntityFX fx;
 
     [Header("Major stats")]
-    public Stat strength; //Á¦Á¿£¬1Á¦Á¿Ìá¸ß1µãÉËº¦(¹¥»÷Á¦)ºÍ1%±©ÉË
-    public Stat agility; //Ãô½Ý£¬1Ãô½ÝÔö¼Ó1%ÉÁ±ÜÂÊºÍ1%±©»÷ÂÊ
-    public Stat intelligence; //ÖÇÁ¦£¬1ÖÇÁ¦Ôö¼Ó1Ä§·¨ÉËº¦ºÍ3µãÄ§¿¹
-    public Stat vitality; //ÌåÖÊ£¬1ÌåÖÊÔö¼Ó4µã×î´óÉúÃüÖµ
+    public Stat strength; //åŠ›é‡ï¼Œ1åŠ›é‡æé«˜1ç‚¹ä¼¤å®³(æ”»å‡»åŠ›)å’Œ1%æš´ä¼¤
+    public Stat agility; //æ•æ·ï¼Œ1æ•æ·å¢žåŠ 1%é—ªé¿çŽ‡å’Œ1%æš´å‡»çŽ‡
+    public Stat intelligence; //æ™ºåŠ›ï¼Œ1æ™ºåŠ›å¢žåŠ 1é­”æ³•ä¼¤å®³å’Œ3ç‚¹é­”æŠ—
+    public Stat vitality; //ä½“è´¨ï¼Œ1ä½“è´¨å¢žåŠ 4ç‚¹æœ€å¤§ç”Ÿå‘½å€¼
 
     [Header("Offensive stats")]
     public Stat damage;
@@ -45,9 +45,9 @@ public class CharacterStats : MonoBehaviour
     public Stat iceDamage;
     public Stat lightningDamage;
 
-    public bool isIgnited; //µãÈ¼
-    public bool isChilled; //º®Àä£¬¼õÉÙ20%»¤¼×
-    public bool isShocked; //Âé±Ô£¬½µµÍÃüÖÐÂÊ
+    public bool isIgnited; //ç‚¹ç‡ƒ
+    public bool isChilled; //å¯’å†·ï¼Œå‡å°‘20%æŠ¤ç”²
+    public bool isShocked; //éº»ç—¹ï¼Œé™ä½Žå‘½ä¸­çŽ‡
 
     private float igniteDuration = 2;
     private float ignitedTimer;
@@ -155,7 +155,7 @@ public class CharacterStats : MonoBehaviour
     }
 
 
-    #region Ä§·¨ÉËº¦ºÍÒì³£
+    #region é­”æ³•ä¼¤å®³å’Œå¼‚å¸¸
     public virtual void DoMagicDamage(CharacterStats _targetStats)
     {
         int _fireDamage = fireDamage.GetValue();
@@ -180,10 +180,10 @@ public class CharacterStats : MonoBehaviour
 
         bool canIgnite = false, canChille = false, canShocke = false;
 
-        //Í¬Ê±Ö»ÄÜÌ×ÓÃÒ»ÖÖÒì³£
+        //åŒæ—¶åªèƒ½å¥—ç”¨ä¸€ç§å¼‚å¸¸
         //CheckOnlyOneAilment(_fireDamage, _iceDamage, _lightningDamage, maxElementDamage, ref canIgnite, ref canChille, ref canShocke);
 
-        //Í¬Ê±¿ÉÌ×ÓÃ¶àÖÖÒì³£
+        //åŒæ—¶å¯å¥—ç”¨å¤šç§å¼‚å¸¸
         if(_fireDamage > 0 && !_targetStats.isIgnited) 
             canIgnite = true;
         if(_iceDamage > 0 && !_targetStats.isChilled)
@@ -247,7 +247,7 @@ public class CharacterStats : MonoBehaviour
             _targetStats.isIgnited = _ignite;
             _targetStats.ignitedTimer = igniteDuration;
 
-            //¸øÓèµÐÈËµãÈ¼ÉËº¦
+            //ç»™äºˆæ•Œäººç‚¹ç‡ƒä¼¤å®³
             _targetStats.SetupIgnitedDamage(Mathf.RoundToInt(_targetStats.maxHealth.GetValue() * .001f + fireDamage.GetValue() * .2f));
             _targetStats.fx.IgnitedFxFor(igniteDuration);
         }
@@ -383,7 +383,7 @@ public class CharacterStats : MonoBehaviour
         isDead = true;
     }
 
-    #region ÉÁ±Ü¡¢»¤¼×¡¢¿¹ÐÔ¡¢±©»÷¡¢ÒýÈ¼¡¢À×»÷¡¢HPÉÏÏÞ¼ÆËã
+    #region é—ªé¿ã€æŠ¤ç”²ã€æŠ—æ€§ã€æš´å‡»ã€å¼•ç‡ƒã€é›·å‡»ã€HPä¸Šé™è®¡ç®—
 
     public virtual void OnEvasion(Transform _responTransform)
     {
@@ -411,7 +411,7 @@ public class CharacterStats : MonoBehaviour
         else
             totalDamage -= _targetStats.armor.GetValue();
 
-        //Èô»¤¼×´óÓÚÉËº¦£¬»áÈÃÉËº¦Îª¸º£¬µ¼ÖÂ¸øÄ¿±ê»ØÑª
+        //è‹¥æŠ¤ç”²å¤§äºŽä¼¤å®³ï¼Œä¼šè®©ä¼¤å®³ä¸ºè´Ÿï¼Œå¯¼è‡´ç»™ç›®æ ‡å›žè¡€
         totalDamage = Mathf.Clamp(totalDamage, 0, int.MaxValue);
         return totalDamage;
     }
@@ -477,20 +477,20 @@ public class CharacterStats : MonoBehaviour
     {
         return _statType switch
         {
-            StatType.strength => "Á¦Á¿",
-            StatType.agility => "Ãô½Ý",
-            StatType.intelegence => "ÖÇÁ¦",
-            StatType.vitality => "ÌåÖÊ",
-            StatType.damage => "¹¥»÷Á¦",
-            StatType.critChance => "±©»÷",
-            StatType.critPower => "±¬ÉË",
-            StatType.health => "ÉúÃü",
-            StatType.armor => "»¤¼×",
-            StatType.evasion => "ÉÁ±Ü",
-            StatType.magicRes => "Ä§¿¹",
-            StatType.fireDamage => "»ðÉË",
-            StatType.iceDamage => "±ùÉË",
-            StatType.lightningDamage => "À×ÉË",
+            StatType.strength => "åŠ›é‡",
+            StatType.agility => "æ•æ·",
+            StatType.intelegence => "æ™ºåŠ›",
+            StatType.vitality => "ä½“è´¨",
+            StatType.damage => "æ”»å‡»åŠ›",
+            StatType.critChance => "æš´å‡»",
+            StatType.critPower => "çˆ†ä¼¤",
+            StatType.health => "ç”Ÿå‘½",
+            StatType.armor => "æŠ¤ç”²",
+            StatType.evasion => "é—ªé¿",
+            StatType.magicRes => "é­”æŠ—",
+            StatType.fireDamage => "ç«ä¼¤",
+            StatType.iceDamage => "å†°ä¼¤",
+            StatType.lightningDamage => "é›·ä¼¤",
             _ => "",
         };
     }

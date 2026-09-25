@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -49,7 +49,7 @@ public class UI_SkillTreeSlot : MonoBehaviour,IPointerEnterHandler, IPointerExit
         {
             if (shouldBeUnlocked[i].unlocked == false)
             {
-                Debug.Log("ÎŞ·¨½âËø¼¼ÄÜ£¬È±ÉÙÇ°ÖÃ¼¼ÄÜ");
+                Debug.Log("æ— æ³•è§£é”æŠ€èƒ½ï¼Œç¼ºå°‘å‰ç½®æŠ€èƒ½");
                 return;
             }
         }
@@ -58,7 +58,7 @@ public class UI_SkillTreeSlot : MonoBehaviour,IPointerEnterHandler, IPointerExit
         {
             if (shouBeLocked[i].unlocked == true)
             {
-                Debug.Log("ÎŞ·¨½âËø¼¼ÄÜ£¬ÓëÆäËû¼¼ÄÜ³åÍ»");
+                Debug.Log("æ— æ³•è§£é”æŠ€èƒ½ï¼Œä¸å…¶ä»–æŠ€èƒ½å†²çª");
                 return;
             }
         }
@@ -72,7 +72,7 @@ public class UI_SkillTreeSlot : MonoBehaviour,IPointerEnterHandler, IPointerExit
     {
         ui.skillToolTip.ShowSkillToolTip(skillDescription,skillName_CH,skillCost);
 
-        //µ¯´°Î»ÖÃ¸úËæÊó±ê
+        //å¼¹çª—ä½ç½®è·Ÿéšé¼ æ ‡
         /*
         Vector2 mousePosition = Input.mousePosition;
 

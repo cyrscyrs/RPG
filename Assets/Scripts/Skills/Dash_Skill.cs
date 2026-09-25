@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,7 +34,7 @@ public class Dash_Skill : Skill
         cloneOnArrivalUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockCloneOnArrival);
     }
 
-    #region ½âËø¼ì²é
+    #region è§£é”æ£€æŸ¥
 
     protected override void CheckUnlock()
     {

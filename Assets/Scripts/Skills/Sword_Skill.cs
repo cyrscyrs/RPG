@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 public class Sword_Skill : Skill
@@ -93,7 +93,7 @@ public class Sword_Skill : Skill
     {
         if (cooldownTimer <= 0 && player.isGroundDetected())
             return true;
-        player.fx.CreatePopUpText("¼¼ÄÜÀäÈ´ÖÐ");
+        player.fx.CreatePopUpText("æŠ€èƒ½å†·å´ä¸­");
         return false;
     }
 
@@ -151,7 +151,7 @@ public class Sword_Skill : Skill
         }
     }
 
-    #region ½£¼¼½âËø
+    #region å‰‘æŠ€è§£é”
 
     protected override void CheckUnlock()
     {

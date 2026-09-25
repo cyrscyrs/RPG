@@ -42,6 +42,9 @@ public class PlayerFX : EntityFX
     }
     public void ScreenShake(Vector3 _shakePower)
     {
+        if (screenShake == null)
+            return;
+
         screenShake.m_DefaultVelocity = new Vector3(_shakePower.x * player.facingDir, _shakePower.y) * shakeMultipler;
         screenShake.GenerateImpulse();
     }

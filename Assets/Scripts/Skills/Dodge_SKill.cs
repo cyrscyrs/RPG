@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +22,7 @@ public class Dodge_SKill : Skill
         unlockMirageDodgeButton.GetComponent<Button>().onClick.AddListener(UnlockMirageDodge);
     }
 
-    #region ½âËø¼ì²é
+    #region è§£é”æ£€æŸ¥
     protected override void CheckUnlock()
     {
         UnlockDodge();

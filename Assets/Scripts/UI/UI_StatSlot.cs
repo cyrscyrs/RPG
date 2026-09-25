@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -62,20 +62,20 @@ public class UI_StatSlot : MonoBehaviour,IPointerEnterHandler,IPointerExitHandle
     {
         return _statType switch
         {
-            StatType.strength => "Á¦Á¿",
-            StatType.agility => "Ãô½Ý",
-            StatType.intelegence => "ÖÇÁ¦",
-            StatType.vitality => "ÌåÖÊ",
-            StatType.damage => "¹¥»÷Á¦",
-            StatType.critChance => "±©»÷",
-            StatType.critPower => "±¬ÉË",
-            StatType.health => "ÉúÃü",
-            StatType.armor => "»¤¼×",
-            StatType.evasion => "ÉÁ±Ü",
-            StatType.magicRes => "Ä§¿¹",
-            StatType.fireDamage => "»ðÉË",
-            StatType.iceDamage => "±ùÉË",
-            StatType.lightningDamage => "À×ÉË",
+            StatType.strength => "åŠ›é‡",
+            StatType.agility => "æ•æ·",
+            StatType.intelegence => "æ™ºåŠ›",
+            StatType.vitality => "ä½“è´¨",
+            StatType.damage => "æ”»å‡»åŠ›",
+            StatType.critChance => "æš´å‡»",
+            StatType.critPower => "çˆ†ä¼¤",
+            StatType.health => "ç”Ÿå‘½",
+            StatType.armor => "æŠ¤ç”²",
+            StatType.evasion => "é—ªé¿",
+            StatType.magicRes => "é­”æŠ—",
+            StatType.fireDamage => "ç«ä¼¤",
+            StatType.iceDamage => "å†°ä¼¤",
+            StatType.lightningDamage => "é›·ä¼¤",
             _ => "",
         };
     }

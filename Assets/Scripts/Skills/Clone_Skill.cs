@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +41,7 @@ public class Clone_Skill : Skill
         crystalInsteadUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockCrystalInstead);
     }
 
-    #region ½âËø¼¼ÄÜ
+    #region è§£é”æŠ€èƒ½
 
     protected override void CheckUnlock()
     {

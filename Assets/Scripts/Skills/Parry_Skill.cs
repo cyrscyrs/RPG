@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,7 +39,7 @@ public class Parry_Skill : Skill
         parryWithMirageUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockParryWithMirage);
     }
 
-    #region ¼¼ÄÜ½âËø
+    #region æŠ€èƒ½è§£é”
 
     protected override void CheckUnlock()
     {
