@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe94277f52688745b83190a8bef44c4, type: 3}
+  m_Name: Green Essence
+  m_EditorClassIdentifier: 
+  itemType: 0
+  itemName: "\u7EFF\u8272\u7CBE\u534E"
+  icon: {fileID: -1989186159, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
+  itemId: 3d6ea9cb3dbf6674fb5ef7f676d4ec9e
+  dropChance: 25

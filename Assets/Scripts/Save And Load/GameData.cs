@@ -20,6 +20,9 @@ public class GameData
     // 被玩家彻底摧毁的墙体：key = 墙体的 wallId，value = 是否已摧毁
     public SerializableDictionary<string, bool> destroyedWalls;
 
+    // 怪物图鉴的累计击杀数：key = 怪物 ID，value = 击杀次数
+    public SerializableDictionary<string, int> monsterKills;
+
 
     public int lostCurrencyAmount;
     public float lostPositionX;
@@ -46,6 +49,7 @@ public class GameData
         closestCheckpointId= string.Empty;
 
         destroyedWalls = new SerializableDictionary<string, bool>();
+        monsterKills = new SerializableDictionary<string, int>();
 
         volumeSettings = new SerializableDictionary<string, float>();
 

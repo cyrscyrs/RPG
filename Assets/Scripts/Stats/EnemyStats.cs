@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +7,14 @@ public class EnemyStats : CharacterStats
     private Enemy enemy;
     private ItemDrop myDrop;
     public Stat soulsDropAmont;
+
+    [Tooltip("图鉴用的怪物 ID。留空 = 用这个物体的名字（会自动去掉 (Clone)），一般留空就行")]
+    [SerializeField] private string monsterId;
+
+    /// <summary>怪物图鉴统计击杀数用的 ID。</summary>
+    public string MonsterId => string.IsNullOrEmpty(monsterId)
+        ? MonsterBestiary.CleanName(gameObject.name)
+        : MonsterBestiary.CleanName(monsterId);
 
     [Header("Level details")]
     [SerializeField] private int level = 1;
@@ -66,6 +74,7 @@ public class EnemyStats : CharacterStats
     protected override void Die()
     {
         base.Die();
+        MonsterBestiary.NotifyKill(MonsterId);   // 图鉴：累计击杀 +1
         enemy.Die();
         PlayerManager.instance.currency += soulsDropAmont.GetValue();
         myDrop.GenerateDrop();

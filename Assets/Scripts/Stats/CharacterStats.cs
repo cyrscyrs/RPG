@@ -404,22 +404,27 @@ public class CharacterStats : MonoBehaviour
 
         return false;
     }
+    //护甲减伤比例为：[护甲值] / ([护甲值] + 50)
     protected int CheckTargetArmor(CharacterStats _targetStats, int totalDamage)
     {
+        int targetArmor = _targetStats.armor.GetValue();
         if (_targetStats.isChilled)
-            totalDamage -= Mathf.RoundToInt(_targetStats.armor.GetValue() * .8f);
-        else
-            totalDamage -= _targetStats.armor.GetValue();
+        {
+            targetArmor = Mathf.RoundToInt(targetArmor * .8f);
+        }
 
-        //若护甲大于伤害，会让伤害为负，导致给目标回血
-        totalDamage = Mathf.Clamp(totalDamage, 0, int.MaxValue);
+        totalDamage = Mathf.RoundToInt(totalDamage * (targetArmor / (targetArmor + 50)));
+        //保底伤害
+        if (totalDamage <= 0) totalDamage = 1;
         return totalDamage;
     }
 
+    //魔抗减伤比例：[总魔抗] / ([总魔抗] + 66)
     protected int CheckTargetResistance(CharacterStats _targetStats, int totalMagicDamage)
     {
-        totalMagicDamage -= _targetStats.magicResistance.GetValue() + 3 * _targetStats.intelligence.GetValue();
-        totalMagicDamage = Mathf.Clamp(totalMagicDamage, 0, int.MaxValue);
+        int targetResistance = _targetStats.magicResistance.GetValue() + 3 * _targetStats.intelligence.GetValue();
+        totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * (targetResistance / (targetResistance + 66)));
+        if (totalMagicDamage <= 0) totalMagicDamage = 1;
         return totalMagicDamage;
     }
 

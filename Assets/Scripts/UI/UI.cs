@@ -17,6 +17,9 @@ public class UI : MonoBehaviour, ISaveManager
     [SerializeField] private GameObject optionsUI;
     [SerializeField] private GameObject InGameUI;
 
+    [Tooltip("怪物图鉴面板。运行时由 MonsterBestiaryUI 自动注册，也可以手动拖")]
+    [SerializeField] private GameObject bestiaryUI;
+
     public UI_ItemToolTip itemToolTip;
     public UI_StatToolTip statToolTip;
     public UI_CraftWindow craftWindow;
@@ -52,7 +55,13 @@ public class UI : MonoBehaviour, ISaveManager
 
         if (Input.GetKeyDown(KeyCode.O))
             SwitchWithKeyTo(optionsUI);
+
+        if (Input.GetKeyDown(KeyCode.L) && bestiaryUI != null)
+            SwitchWithKeyTo(bestiaryUI);
     }
+
+    /// <summary>MonsterBestiaryUI 在运行时把图鉴面板注册进来，不用手动拖。</summary>
+    public void SetBestiaryPanel(GameObject _panel) => bestiaryUI = _panel;
 
     public void SwitchTo(GameObject _menu)
     {
