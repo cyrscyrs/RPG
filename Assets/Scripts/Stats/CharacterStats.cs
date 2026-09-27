@@ -23,26 +23,40 @@ public class CharacterStats : MonoBehaviour
 {
     public EntityFX fx;
 
-    [Header("Major stats")]
-    public Stat strength; //力量，1力量提高1点伤害(攻击力)和1%暴伤
-    public Stat agility; //敏捷，1敏捷增加1%闪避率和1%暴击率
-    public Stat intelligence; //智力，1智力增加1魔法伤害和3点魔抗
-    public Stat vitality; //体质，1体质增加4点最大生命值
+    [Header("基础属性")]
+    [Tooltip("力量，1力量提高1点伤害(攻击力)和1%暴伤")]
+    public Stat strength;
+    [Tooltip("敏捷，1敏捷增加1%闪避率和1%暴击率")]
+    public Stat agility;
+    [Tooltip("智力，1智力增加1魔法伤害和3点魔抗")]
+    public Stat intelligence;
+    [Tooltip("体质，1体质增加4点最大生命值")]
+    public Stat vitality;
 
-    [Header("Offensive stats")]
+    [Header("攻击属性")]
+    [Tooltip("伤害")]
     public Stat damage;
+    [Tooltip("暴击")]
     public Stat critChance;
+    [Tooltip("爆伤")]
     public Stat critPower;
 
-    [Header("Defensive stats")]
+    [Header("防御属性")]
+    [Tooltip("生命值")]
     public Stat maxHealth;
+    [Tooltip("护甲")]
     public Stat armor;
+    [Tooltip("闪避")]
     public Stat evasion;
+    [Tooltip("魔抗")]
     public Stat magicResistance;
 
-    [Header("Magic stats")]
+    [Header("魔法属性")]
+    [Tooltip("火伤")]
     public Stat fireDamage;
+    [Tooltip("冰伤")]
     public Stat iceDamage;
+    [Tooltip("雷伤")]
     public Stat lightningDamage;
 
     public bool isIgnited; //点燃
@@ -69,6 +83,9 @@ public class CharacterStats : MonoBehaviour
 
     public System.Action OnHP_Changed;
     public bool isDead { get; private set; }
+
+    /// <summary>最近一次攻击自己的对象（衣服的反弹伤害等效果会用到）。</summary>
+    [System.NonSerialized] public CharacterStats lastAttacker;
     private bool isVulnerable;
     public bool isInvincible { get; private set; }
 
@@ -128,6 +145,7 @@ public class CharacterStats : MonoBehaviour
     public virtual void DoDamage(CharacterStats _targetStats)
     {
         if (_targetStats.isInvincible) return;
+        _targetStats.lastAttacker = this;   // 记下攻击者，方便被攻击方做反弹之类
         DoPhysicsDamage(_targetStats);
         DoMagicDamage(_targetStats);
         _targetStats.GetComponent<Entity>().SetupKnockbackDir(transform);
@@ -413,7 +431,7 @@ public class CharacterStats : MonoBehaviour
             targetArmor = Mathf.RoundToInt(targetArmor * .8f);
         }
 
-        totalDamage = Mathf.RoundToInt(totalDamage * (targetArmor / (targetArmor + 50)));
+        totalDamage = Mathf.RoundToInt(totalDamage * (1 - (targetArmor / (targetArmor + 50))));
         //保底伤害
         if (totalDamage <= 0) totalDamage = 1;
         return totalDamage;
@@ -423,7 +441,7 @@ public class CharacterStats : MonoBehaviour
     protected int CheckTargetResistance(CharacterStats _targetStats, int totalMagicDamage)
     {
         int targetResistance = _targetStats.magicResistance.GetValue() + 3 * _targetStats.intelligence.GetValue();
-        totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * (targetResistance / (targetResistance + 66)));
+        totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * (1 - (targetResistance / (targetResistance + 66))));
         if (totalMagicDamage <= 0) totalMagicDamage = 1;
         return totalMagicDamage;
     }

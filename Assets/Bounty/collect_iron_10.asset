@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6471d1e536fea624fb92231f459deba2, type: 3}
+  m_Name: collect_iron_10
+  m_EditorClassIdentifier: 
+  questId: collect_iron_10
+  objectiveType: 1
+  title: "\u6536\u8D2D\u94C1\u77FF"
+  typeLabel: 
+  objective: "\u6536\u96C6 10 \u4E2A \uFF1F"
+  content: "\u77FF\u77F3\u5728\u54EA\u90FD\u80FD\u6316\u5230\u3002"
+  targetMonsterId: 
+  targetItem: {fileID: 0}
+  requiredAmount: 10
+  rewards:
+  - currency: 200
+    item: {fileID: 0}
+    amount: 1
+  - currency: 0
+    item: {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
+    amount: 2

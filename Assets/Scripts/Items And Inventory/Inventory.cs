@@ -296,6 +296,23 @@ public class Inventory : MonoBehaviour, ISaveManager
     }
     public List<InventoryItem> GetEquipmentList() => equipment;
     public List<InventoryItem> GetStashList() => stash;
+
+    /// <summary>背包 + 仓库里一共持有多少个这个物品（强化扣材料用）。</summary>
+    public int GetItemAmount(ItemData _item)
+    {
+        if (_item == null)
+            return 0;
+
+        int amount = 0;
+
+        if (inventoryDictionary != null && inventoryDictionary.TryGetValue(_item, out InventoryItem inBag))
+            amount += inBag.stackSize;
+
+        if (stashDictionary != null && stashDictionary.TryGetValue(_item, out InventoryItem inStash))
+            amount += inStash.stackSize;
+
+        return amount;
+    }
     public ItemData_Equipment GetEquipment(EquipmentType _type)
     {
         ItemData_Equipment equipedItem = null;
@@ -319,8 +336,17 @@ public class Inventory : MonoBehaviour, ISaveManager
 
         if (canUseFlask)
         {
-            flaskCooldown = currentFlask.itemCooldown;
-            currentFlask.Effect(null);
+            // 血瓶 10 级：恢复量 +100%（翻倍）；20 级：冷却减半
+            float healMultiplier = EquipmentLevelManager.Instance != null
+                ? EquipmentLevelManager.Instance.GetFlaskHealMultiplier(currentFlask)
+                : 1f;
+
+            float cooldownMultiplier = EquipmentLevelManager.Instance != null
+                ? EquipmentLevelManager.Instance.GetFlaskCooldownMultiplier(currentFlask)
+                : 1f;
+
+            flaskCooldown = currentFlask.itemCooldown * cooldownMultiplier;
+            currentFlask.Effect(null, healMultiplier);
             lastTimeUsedFlask = Time.time;
         }
         else

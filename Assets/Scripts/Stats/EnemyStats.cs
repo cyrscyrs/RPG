@@ -75,6 +75,7 @@ public class EnemyStats : CharacterStats
     {
         base.Die();
         MonsterBestiary.NotifyKill(MonsterId);   // 图鉴：累计击杀 +1
+        BountyBoard.NotifyKill(MonsterId);       // 赏金任务：猎杀型任务进度
         enemy.Die();
         PlayerManager.instance.currency += soulsDropAmont.GetValue();
         myDrop.GenerateDrop();

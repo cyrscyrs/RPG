@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Marble
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: marble
+  itemName: "\u5927\u7406\u77F3"
   icon: {fileID: -898912707, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: fd98bfa561360394296e659b97430284
   dropChance: 30

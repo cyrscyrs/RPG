@@ -70,6 +70,13 @@ public class UI : MonoBehaviour, ISaveManager
             //防止淡入效果失效
             bool fadeScreen = transform.GetChild(i).GetComponent<UI_FadeScreen>() != null;
 
+            // 自己管理显示的面板（对话、强化等）不要被菜单切换关掉，否则面板上的脚本就不跑了
+            if (transform.GetChild(i).GetComponent<UI_SelfManagedPanel>() != null)
+            {
+                transform.GetChild(i).gameObject.SetActive(true);
+                continue;
+            }
+
             if (fadeScreen == false)
                 transform.GetChild(i).gameObject.SetActive(false);
         }
@@ -78,6 +85,10 @@ public class UI : MonoBehaviour, ISaveManager
         {
             AudioManager.instance.PlaySFX(7, null);
             _menu.SetActive(true);
+
+            // 切到别的菜单时，让对话 / 强化这种自管理面板把自己收起来
+            if (_menu != InGameUI)
+                UI_SelfManagedPanel.NotifyOtherMenuOpened();
         }
 
         if (GameManager.instance != null)
@@ -110,7 +121,13 @@ public class UI : MonoBehaviour, ISaveManager
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            if (transform.GetChild(i).gameObject.activeSelf && transform.GetChild(i).GetComponent<UI_FadeScreen>() == null)
+            Transform child = transform.GetChild(i);
+
+            // 自己管理显示的面板不算「开着的菜单」（它们的根节点一直是激活的），要先跳过
+            if (child.GetComponent<UI_SelfManagedPanel>() != null)
+                continue;
+
+            if (child.gameObject.activeSelf && child.GetComponent<UI_FadeScreen>() == null)
                 return;
         }
 

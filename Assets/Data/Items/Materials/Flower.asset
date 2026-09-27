@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Flower
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Flower
+  itemName: "\u82B1\u82DE"
   icon: {fileID: -1675933377, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 49e93fbc6c516cd44a00f5a8c8db5b15
   dropChance: 50

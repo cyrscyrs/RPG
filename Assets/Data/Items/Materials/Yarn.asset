@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Yarn
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Yarn
+  itemName: "\u6BDB\u7EBF"
   icon: {fileID: 1748745940, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: c85ef8b7c5793d64e8bf5a1ac11e2f55
   dropChance: 32

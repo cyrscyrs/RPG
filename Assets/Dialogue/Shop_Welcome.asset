@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8e3f28b6fb3f41a863a2091b97957, type: 3}
+  m_Name: Shop_Welcome
+  m_EditorClassIdentifier: 
+  dialogueId: shop_welcome
+  onceOnly: 0
+  hideChosenChoices: 0
+  nodes:
+  - nodeId: n1
+    speaker: 
+    text: "\u6B22\u8FCE\u5149\u4E34\uFF01"
+    nextNodeId: n2
+    choices: []
+  - nodeId: n2
+    speaker: 
+    text: 
+    nextNodeId: 
+    choices:
+    - choiceId: enter
+      actionId: open_shop
+      label: "\u8FDB\u5165\u5546\u5E97"
+      targetNodeId: 
+      returnToChoices: 0
+    - choiceId: leave
+      actionId: 
+      label: "\u79BB\u5F00"
+      targetNodeId: 
+      returnToChoices: 0

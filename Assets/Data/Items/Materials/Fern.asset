@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fern
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Fern
+  itemName: "\u8568"
   icon: {fileID: -716120472, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 12b8a45c9cd50684089d303e12737313
   dropChance: 50

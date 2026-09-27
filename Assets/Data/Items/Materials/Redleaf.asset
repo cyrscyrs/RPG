@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Redleaf
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Redleaf
+  itemName: "\u7EA2\u53F6"
   icon: {fileID: 429609311, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 7246f90154799e841b572cfbb7d51326
   dropChance: 50

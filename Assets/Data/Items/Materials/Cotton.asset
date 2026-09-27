@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cotton
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Cotton
+  itemName: "\u68C9\u82B1"
   icon: {fileID: -1864511675, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 37db200629bf8014eb03e3801a51b19f
   dropChance: 50

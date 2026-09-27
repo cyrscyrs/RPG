@@ -148,7 +148,18 @@ public class MonsterBestiary : MonoBehaviour, ISaveManager
     }
 
     /// <summary>去掉运行时克隆出来的 "(Clone)" 后缀，让击杀统计能和图鉴条目对上。</summary>
-    public static string CleanName(string _name) => string.IsNullOrEmpty(_name) ? string.Empty : _name.Replace("(Clone)", "").Trim();
+    public static string CleanName(string _name)
+    {
+        if (string.IsNullOrEmpty(_name))
+            return string.Empty;
+
+        // 统一成一个「核心名字」再匹配：去掉 (Clone) 后缀、去掉 Enemy_ 前缀、去空格、转小写。
+        // 这样图鉴条目的 ID 写「skeleton」或「Enemy_Skeleton」都能和运行时物体名对上。
+        string name = _name.Replace("(Clone)", "").Trim().ToLowerInvariant();
+        name = name.Replace("enemy_", "").Replace("enemy", "").Replace(" ", "").Replace("_", "");
+
+        return name;
+    }
 
     #endregion
 
@@ -157,6 +168,10 @@ public class MonsterBestiary : MonoBehaviour, ISaveManager
     /// <summary>敌人死亡时由 EnemyStats 调用。</summary>
     public static void NotifyKill(string _monsterId)
     {
+        // 兜底：面板根节点一开始是关的时 Awake 不会执行，这里再找一次（包含未激活物体），保证击杀不丢
+        if (instance == null)
+            instance = FindObjectOfType<MonsterBestiary>(true);
+
         if (instance != null)
             instance.RegisterKill(_monsterId);
     }

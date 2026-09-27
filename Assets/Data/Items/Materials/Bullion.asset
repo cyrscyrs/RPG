@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bullion
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Bullion
+  itemName: "\u91D1\u7816"
   icon: {fileID: -957751355, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: b7f9bc74d232f8c4780d7b4a4d4ac276
   dropChance: 20

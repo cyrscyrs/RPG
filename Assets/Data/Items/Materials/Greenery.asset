@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Greenery
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Greenery
+  itemName: "\u7EFF\u690D"
   icon: {fileID: 1386026132, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 279823b2f714b434bbeef7e6d609e713
   dropChance: 50

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,9 +10,15 @@ public class Heal_Effect : ItemEffect
 
     public override void ExecuteEffect(Transform _enemyPosition)
     {
+        ExecuteEffect(_enemyPosition, 1f);
+    }
+
+    /// <summary>血瓶 10 级会把恢复量乘上倍率（1 + 100%）。</summary>
+    public override void ExecuteEffect(Transform _enemyPosition, float _multiplier)
+    {
         PlayerStats playerStats = PlayerManager.instance.player.GetComponent<PlayerStats>();
 
-        int healAmount = Mathf.RoundToInt(playerStats.GetMaxHealthValue() * healPercent);
+        int healAmount = Mathf.RoundToInt(playerStats.GetMaxHealthValue() * healPercent * Mathf.Max(0f, _multiplier));
 
         playerStats.IncreaseHP_By(healAmount);
     }

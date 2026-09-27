@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,5 +11,11 @@ public class ItemEffect : ScriptableObject
     public virtual void ExecuteEffect(Transform _enemyPosition)
     {
 
+    }
+
+    /// <summary>带倍率的版本：默认忽略倍率，需要支持倍率的效果（比如治疗）重写它。</summary>
+    public virtual void ExecuteEffect(Transform _enemyPosition, float _multiplier)
+    {
+        ExecuteEffect(_enemyPosition);
     }
 }

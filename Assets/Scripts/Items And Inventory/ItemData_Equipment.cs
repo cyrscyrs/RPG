@@ -20,37 +20,68 @@ public class ItemData_Equipment : ItemData
     public ItemEffect[] itemEffects;
 
     [Header("Major stats")]
+    [Tooltip("力量，1力量提高1点伤害(攻击力)和1%暴伤")]
     public int strength;
+    [Tooltip("敏捷，1敏捷增加1%闪避率和1%暴击率")]
     public int agility;
+    [Tooltip("智力，1智力增加1魔法伤害和3点魔抗")]
     public int intelligence;
+    [Tooltip("体质，1体质增加4点最大生命值")]
     public int vitality;
 
     [Header("Offensive stats")]
+    [Tooltip("伤害")]
     public int damage;
+    [Tooltip("暴击")]
     public int critChance;
+    [Tooltip("爆伤")]
     public int critPower;
 
     [Header("Defensive stats")]
+    [Tooltip("生命值")]
     public int health;
+    [Tooltip("护甲")]
     public int armor;
+    [Tooltip("闪避")]
     public int evasion;
+    [Tooltip("魔抗")]
     public int magicResistance;
 
     [Header("Magic stats")]
+    [Tooltip("火伤")]
     public int fireDamage;
+    [Tooltip("冰伤")]
     public int iceDamage;
+    [Tooltip("雷伤")]
     public int lightningDamage;
 
     [Header("Craft requirements")]
     public List<InventoryItem> craftingMaterials;
 
+    [Header("升级成长（曲线见 EquipmentGrowthConfig）")]
+    [Tooltip("1~9 级：每级给每项属性增加的固定值")]
+    public int growthFlatPerLevel = 2;
+
+    [Tooltip("11~19 级：每级给每项属性增加的百分比（0.1 = 每级 +10%）")]
+    public float growthPercentPerLevel = 0.1f;
+
+    // 当前实际加了多少（运行时缓存），升级/换装时用来精确移除
+    [System.NonSerialized] private readonly List<StatValuePair> appliedModifiers = new List<StatValuePair>();
+
     private int descriptionLength;
 
     public void Effect(Transform _enemyPosition)
     {
+        Effect(_enemyPosition, 1f);
+    }
+
+    /// <summary>带倍率的版本（血瓶升级后恢复量翻倍会用到）。</summary>
+    public void Effect(Transform _enemyPosition, float _multiplier)
+    {
         foreach (var item in itemEffects)
         {
-            item.ExecuteEffect(_enemyPosition);
+            if (item != null)
+                item.ExecuteEffect(_enemyPosition, _multiplier);
         }
     }
 
@@ -69,52 +100,75 @@ public class ItemData_Equipment : ItemData
     {
         PlayerStats playerStats = PlayerManager.instance.player.GetComponent<PlayerStats>();
 
-        playerStats.strength.AddModifier(strength);
-        playerStats.agility.AddModifier(agility);
-        playerStats.intelligence.AddModifier(intelligence);
-        playerStats.vitality.AddModifier(vitality);
+        appliedModifiers.Clear();
 
-        playerStats.damage.AddModifier(damage);
-        playerStats.critChance.AddModifier(critChance);
-        playerStats.armor.AddModifier(armor);
+        AddStatModifier(playerStats.strength, strength);
+        AddStatModifier(playerStats.agility, agility);
+        AddStatModifier(playerStats.intelligence, intelligence);
+        AddStatModifier(playerStats.vitality, vitality);
 
-        playerStats.maxHealth.AddModifier(health);
-        playerStats.armor.AddModifier(armor);
-        playerStats.evasion.AddModifier(evasion);
-        playerStats.magicResistance.AddModifier(magicResistance);
+        AddStatModifier(playerStats.damage, damage);
+        AddStatModifier(playerStats.critChance, critChance);
+        AddStatModifier(playerStats.critPower, critPower);
 
-        playerStats.fireDamage.AddModifier(fireDamage);
-        playerStats.iceDamage.AddModifier(iceDamage);
-        playerStats.lightningDamage.AddModifier(lightningDamage);
+        AddStatModifier(playerStats.maxHealth, health);
+        AddStatModifier(playerStats.armor, armor);
+        AddStatModifier(playerStats.evasion, evasion);
+        AddStatModifier(playerStats.magicResistance, magicResistance);
+
+        AddStatModifier(playerStats.fireDamage, fireDamage);
+        AddStatModifier(playerStats.iceDamage, iceDamage);
+        AddStatModifier(playerStats.lightningDamage, lightningDamage);
+
+        // 护符的 10 级（基础属性 +20）/ 20 级（全属性 +20%）加成
+        if (EquipmentLevelManager.Instance != null)
+            EquipmentLevelManager.Instance.ApplyMilestoneStatModifiers(this, playerStats, appliedModifiers);
     }
 
     public void RemoveModifiers() 
     {
-        PlayerStats playerStats = PlayerManager.instance.player.GetComponent<PlayerStats>();
+        foreach (StatValuePair pair in appliedModifiers)
+        {
+            if (pair != null && pair.stat != null)
+                pair.stat.RemoveModifier(pair.value);
+        }
 
-        playerStats.strength.RemoveModifier(strength);
-        playerStats.agility.RemoveModifier(agility);
-        playerStats.intelligence.RemoveModifier(intelligence);
-        playerStats.vitality.RemoveModifier(vitality);
+        appliedModifiers.Clear();
+    }
 
-        playerStats.damage.RemoveModifier(damage);
-        playerStats.critChance.RemoveModifier(critChance);
-        playerStats.armor.RemoveModifier(armor);
+    /// <summary>按装备等级算出实际加多少，再挂到属性上并记录下来。</summary>
+    private void AddStatModifier(Stat _stat, int _baseValue)
+    {
+        if (_stat == null || _baseValue == 0)
+            return;
 
-        playerStats.maxHealth.RemoveModifier(health);
-        playerStats.armor.RemoveModifier(armor);
-        playerStats.evasion.RemoveModifier(evasion);
-        playerStats.magicResistance.RemoveModifier(magicResistance);
+        int value = EquipmentLevelManager.Instance != null
+            ? EquipmentLevelManager.Instance.CalculateStatValue(this, _baseValue)
+            : _baseValue;
 
-        playerStats.fireDamage.RemoveModifier(fireDamage);
-        playerStats.iceDamage.RemoveModifier(iceDamage);
-        playerStats.lightningDamage.RemoveModifier(lightningDamage);
+        if (value == 0)
+            return;
+
+        _stat.AddModifier(value);
+        appliedModifiers.Add(new StatValuePair { stat = _stat, value = value });
     }
 
     public override string GetDescription()
     {
         sb.Length = 0;
         descriptionLength = 0;
+
+        // 先显示强化等级；下面的属性也会按等级换算后再显示
+        if (EquipmentLevelManager.Instance != null)
+        {
+            int itemLevel = EquipmentLevelManager.Instance.GetLevel(this);
+
+            if (itemLevel > 0)
+            {
+                sb.AppendLine($"强化等级：+{itemLevel} / {EquipmentLevelManager.Instance.MaxLevel}");
+                descriptionLength++;
+            }
+        }
 
         AddItemDescription(strength, "力量");
         AddItemDescription(agility, "敏捷");
@@ -169,6 +223,10 @@ public class ItemData_Equipment : ItemData
 
     private void AddItemDescription(int _value, string _name)
     {
+        // 按装备等级换算后再显示，否则强化完面板上还是 0 级的数值
+        if (EquipmentLevelManager.Instance != null)
+            _value = EquipmentLevelManager.Instance.CalculateStatValue(this, _value);
+
         if (_value != 0)
         {
             if (sb.Length > 0)

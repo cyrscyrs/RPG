@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Root
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Root
+  itemName: "\u6839"
   icon: {fileID: 2138708735, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: ce36b0eb19d50c24bb4980ed15ed4dc7
   dropChance: 32.9

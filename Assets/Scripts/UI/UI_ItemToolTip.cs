@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,7 +13,10 @@ public class UI_ItemToolTip : MonoBehaviour
     public void ShowToolTip(ItemData_Equipment item)
     {
         if(item == null) return;
-        itemNameText.text = item.itemName;
+        // 强化过的装备名字带上等级，例如「木剑 +10」
+        itemNameText.text = EquipmentLevelManager.Instance != null
+            ? EquipmentLevelManager.Instance.GetDisplayName(item)
+            : item.itemName;
         itemTypeText.text = item.GetChineseEquipmentType();
         itemDescription.text = item.GetDescription();
 

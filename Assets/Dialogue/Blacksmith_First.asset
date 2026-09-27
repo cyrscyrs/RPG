@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8e3f28b6fb3f41a863a2091b97957, type: 3}
+  m_Name: Blacksmith_First
+  m_EditorClassIdentifier: 
+  dialogueId: blacksmith_first
+  onceOnly: 1
+  hideChosenChoices: 1
+  nodes:
+  - nodeId: n1
+    speaker: 
+    text: "\u65B0\u9762\u5B54\u554A\uFF0C\u662F\u65B0\u6765\u7684\u5417\uFF1F"
+    nextNodeId: n2
+    choices: []
+  - nodeId: n2
+    speaker: "\u73A9\u5BB6"
+    text: "\u662F\u554A\uFF0C\u4E24\u773C\u4E00\u7741\u5C31\u5230\u8FD9\u91CC\u4E86"
+    nextNodeId: n3
+    choices: []
+  - nodeId: n3
+    speaker: 
+    text: 
+    nextNodeId: 
+    choices:
+    - choiceId: ask_who
+      label: "\u8BE2\u95EE\u5BF9\u65B9\u8EAB\u4EFD"
+      targetNodeId: n4
+      returnToChoices: 1
+    - choiceId: ask_why
+      label: "\u8BE2\u95EE\u5BF9\u65B9\u4E3A\u4EC0\u4E48\u5728\u8FD9\u91CC"
+      targetNodeId: n5
+      returnToChoices: 1
+  - nodeId: n4
+    speaker: "\u73A9\u5BB6"
+    text: "\u4F60\u662F\u4EC0\u4E48\u4EBA\uFF0C\u770B\u8D77\u6765\u5728\u8FD9\u91CC\u5F85\u4E86\u5F88\u4E45\u4E86\uFF0C\u5BF9\u8FD9\u91CC\u5F88\u719F\u6089\u7684\u6837\u5B50"
+    nextNodeId: n4b
+    choices: []
+  - nodeId: n4b
+    speaker: 
+    text: "\u6211\u662F\u8FD9\u91CC\u7684\u94C1\u5320\uFF0C\u5982\u679C\u60F3\u5347\u7EA7\u88C5\u5907\u968F\u65F6\u6765\u627E\u6211"
+    nextNodeId: 
+    choices: []
+  - nodeId: n5
+    speaker: 
+    text: "\u6709\u4E9B\u6750\u6599\u53EA\u6709\u8FD9\u91CC\u624D\u80FD\u83B7\u53D6\uFF0C\u90A3\u4E9B\u602A\u7269\u8EAB\u4E0A\u6D51\u8EAB\u662F\u5B9D\uFF0C\u65E0\u8BBA\u662F\u5236\u4F5C\u8FD8\u662F\u5F3A\u5316\u88C5\u5907\u90FD\u975E\u5E38\u597D\u7528"
+    nextNodeId: 
+    choices: []

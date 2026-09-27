@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mushroom
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: Mushroom
+  itemName: "\u8611\u83C7"
   icon: {fileID: -177013655, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 6f0586f3c7a31594d802829cedef0e42
   dropChance: 50

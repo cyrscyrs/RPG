@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BeastTooth
   m_EditorClassIdentifier: 
   itemType: 0
-  itemName: BeastTooth
+  itemName: "\u517D\u7259"
   icon: {fileID: 1900874589, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   itemId: 076b7162458a1a94db58b453016e8c16
   dropChance: 30

@@ -40,6 +40,22 @@ public class PLayerAnimationTriggers : MonoBehaviour
                 Inventory.instance.GetEquipment(EquipmentType.Weapon)?.Effect(target.transform);
             }
         }
+
+        TrySpawnSwordAura();
+    }
+
+    /// <summary>武器 10 级：每次攻击放出一道剑气（伤害是攻击力的一定比例）。</summary>
+    private void TrySpawnSwordAura()
+    {
+        if (Inventory.instance == null || EquipmentLevelManager.Instance == null)
+            return;
+
+        ItemData_Equipment weapon = Inventory.instance.GetEquipment(EquipmentType.Weapon);
+
+        if (weapon == null || !EquipmentLevelManager.Instance.HasMilestone(weapon, EquipmentLevelManager.Instance.Config.firstMilestone))
+            return;
+
+        SwordAura.Spawn(player, EquipmentLevelManager.Instance.Config);
     }
 
     private void ThrowSword()
