@@ -623,7 +623,7 @@ MonoBehaviour:
   soulsDropAmont:
     baseValue: 100
     modifiers: 
-  monsterId: 
+  monsterId: shady
   level: 1
   percentageModifier: 0.1
 --- !u!114 &5620245659555298410
@@ -665,9 +665,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf2575da7decefd49896dd775756e814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemDropLimit: 0
+  ItemDropLimit: 10
   possibleDrop:
+  - {fileID: 11400000, guid: 49e93fbc6c516cd44a00f5a8c8db5b15, type: 2}
+  - {fileID: 11400000, guid: 8ed51963f9b5a794a854351460cf60ab, type: 2}
+  - {fileID: 11400000, guid: 74c7e2ad994dca3458a07d6fde0a6f4a, type: 2}
+  - {fileID: 11400000, guid: 279823b2f714b434bbeef7e6d609e713, type: 2}
   - {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
+  - {fileID: 11400000, guid: fd98bfa561360394296e659b97430284, type: 2}
+  - {fileID: 11400000, guid: 6f0586f3c7a31594d802829cedef0e42, type: 2}
   dropPrefab: {fileID: 2752415022731389095, guid: 73fc0641ed7a9b34794ec5af50669b1a, type: 3}
 --- !u!114 &5620245659555298404
 MonoBehaviour:

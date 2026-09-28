@@ -16,10 +16,10 @@ MonoBehaviour:
   objectiveType: 1
   title: "\u6536\u8D2D\u94C1\u77FF"
   typeLabel: 
-  objective: "\u6536\u96C6 10 \u4E2A \uFF1F"
-  content: "\u77FF\u77F3\u5728\u54EA\u90FD\u80FD\u6316\u5230\u3002"
+  objective: "\u6536\u96C6 10 \u4E2A \u94C1"
+  content: "\u7838\u9505\u5356\u94C1\u4E5F\u8981\u5B8C\u6210\u4EFB\u52A1\uFF01"
   targetMonsterId: 
-  targetItem: {fileID: 0}
+  targetItem: {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
   requiredAmount: 10
   rewards:
   - currency: 200

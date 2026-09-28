@@ -3,8 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>任务列表里的一行：任务名 / 类型+目标+内容 / 进度 / 奖励 / 接取或提交按钮。</summary>
-public class BountyQuestSlot : MonoBehaviour
+/// <summary>（已废弃）列表行组件现在定义在 BountyQuestSlot.cs 里，Unity 要求类名和文件名一致。</summary>
+public class BountyQuestSlotDeprecated : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI infoText;

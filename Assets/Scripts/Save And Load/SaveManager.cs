@@ -14,6 +14,21 @@ public class SaveManager : MonoBehaviour
     private List<ISaveManager> saveManagers;
     private FileDataHandler dataHandler;
 
+    /// <summary>
+    /// 别的脚本（比如 BountyBoard.Start）可能在 SaveManager.Start 之前就调 SaveGame，
+    /// 所以这里按需再找一次，避免 saveManagers 还是 null。
+    /// </summary>
+    private List<ISaveManager> SaveManagers
+    {
+        get
+        {
+            if (saveManagers == null)
+                saveManagers = FindAllSaveManagers();
+
+            return saveManagers;
+        }
+    }
+
     [ContextMenu("Delete save file")]
     public void DeleteSavedData()
     {
@@ -27,12 +42,16 @@ public class SaveManager : MonoBehaviour
             Destroy(instance.gameObject);
         else
             instance = this;
+
+        // Start 之前就可能有人用到，先把读取器建好
+        if (dataHandler == null)
+            dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
     }
 
     private void Start()
     {
-        dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
-        saveManagers = FindAllSaveManagers();
+        if (dataHandler == null)
+            dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
 
         //Invoke(nameof(LoadGame), .5f);
         LoadGame();
@@ -53,7 +72,7 @@ public class SaveManager : MonoBehaviour
             NewGame();
         }
 
-        foreach(ISaveManager saveManage in saveManagers)
+        foreach(ISaveManager saveManage in SaveManagers)
         {
             saveManage.LoadData(gameData);
         }
@@ -61,7 +80,18 @@ public class SaveManager : MonoBehaviour
 
     public void SaveGame()
     {
-        foreach(ISaveManager saveManager in saveManagers)
+        if (dataHandler == null)
+            dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
+
+        // 读档之前就被调到（比如别的脚本的 Start 里存档）：这时还没数据可写，
+        // 直接返回，免得把已有存档覆盖成空的
+        if (gameData == null)
+        {
+            Debug.Log("存档数据还没准备好，这次 SaveGame 先跳过");
+            return;
+        }
+
+        foreach(ISaveManager saveManager in SaveManagers)
         {
             saveManager.SaveData(ref gameData);
         }
@@ -83,6 +113,9 @@ public class SaveManager : MonoBehaviour
 
     public bool HasSavedData()
     {
+        if (dataHandler == null)
+            dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
+
         if (dataHandler.Load() != null)
         {
             return true;

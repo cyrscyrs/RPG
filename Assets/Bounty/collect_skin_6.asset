@@ -16,7 +16,7 @@ MonoBehaviour:
   objectiveType: 1
   title: "\u6536\u8D2D\u517D\u76AE"
   typeLabel: 
-  objective: "\u6536\u96C6 6 \u4E2A \uFF1F"
+  objective: "\u6536\u96C6 6 \u4E2A \u517D\u76AE"
   content: "\u602A\u7269\u8EAB\u4E0A\u5C31\u80FD\u5265\u5230\u3002"
   targetMonsterId: 
   targetItem: {fileID: 0}

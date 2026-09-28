@@ -16,7 +16,7 @@ MonoBehaviour:
   objectiveType: 0
   title: "\u5F13\u624B\u5A01\u80C1"
   typeLabel: 
-  objective: "\u51FB\u6740 3 \u53EA\u76EE\u6807\u602A\u7269"
+  objective: "\u51FB\u6740 3 \u53EA\u7CBE\u7075\u5F13\u7BAD\u624B"
   content: "\u6CE8\u610F\u522B\u88AB\u5C04\u5230\u3002"
   targetMonsterId: archer
   targetItem: {fileID: 0}

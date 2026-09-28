@@ -375,7 +375,7 @@ MonoBehaviour:
   soulsDropAmont:
     baseValue: 100
     modifiers: 
-  monsterId: 
+  monsterId: skeleton
   level: 1
   percentageModifier: 0.1
 --- !u!70 &6741998361985430868
@@ -432,6 +432,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ad5ba181c0b2a42488b2e838ab4cb8dd, type: 2}
   - {fileID: 11400000, guid: bbce9a05260268240b6a9604376a55de, type: 2}
   - {fileID: 11400000, guid: a73d0a1d25b816443ae2861cd99827f7, type: 2}
+  - {fileID: 11400000, guid: f32b399bb2064c243bed9906f620d52f, type: 2}
+  - {fileID: 11400000, guid: c85ef8b7c5793d64e8bf5a1ac11e2f55, type: 2}
   dropPrefab: {fileID: 2752415022731389095, guid: 73fc0641ed7a9b34794ec5af50669b1a, type: 3}
 --- !u!1 &6741998362376335357
 GameObject:

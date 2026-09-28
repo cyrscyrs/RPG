@@ -36,6 +36,10 @@ public class EntityFX : MonoBehaviour
 
     private GameObject myHealthBar;
 
+    [Header("血条")]
+    [Tooltip("勾上就不在头顶显示血条（比如 Boss 改用屏幕下方的大血条）")]
+    [SerializeField] private bool hideHealthBar;
+
 
     protected virtual void Start()
     {
@@ -51,6 +55,9 @@ public class EntityFX : MonoBehaviour
             myHealthBar = healthBar.gameObject;
         else
             Debug.LogWarning(name + " has no UI_HealthBar in its children.", this);
+
+        if (hideHealthBar && myHealthBar != null)
+            myHealthBar.SetActive(false);
     }
 
 
@@ -71,7 +78,7 @@ public class EntityFX : MonoBehaviour
     public void MakeTransparent(bool _transparent)
     {
         if (myHealthBar != null)
-            myHealthBar.SetActive(!_transparent);
+            myHealthBar.SetActive(!_transparent && !hideHealthBar);
 
         sr.color = _transparent ? Color.clear : Color.white;
     }

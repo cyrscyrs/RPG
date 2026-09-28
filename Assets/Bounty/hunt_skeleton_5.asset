@@ -16,7 +16,7 @@ MonoBehaviour:
   objectiveType: 0
   title: "\u9AB7\u9AC5\u60AC\u8D4F"
   typeLabel: 
-  objective: "\u51FB\u6740 5 \u53EA\u76EE\u6807\u602A\u7269"
+  objective: "\u51FB\u6740 5 \u53EA\u9AB7\u9AC5\u62A4\u536B"
   content: "\u9AA8\u5934\u53EF\u4EE5\u5356\u94B1\uFF0C\u987A\u4FBF\u8D5A\u70B9\u5916\u5FEB\u3002"
   targetMonsterId: skeleton
   targetItem: {fileID: 0}

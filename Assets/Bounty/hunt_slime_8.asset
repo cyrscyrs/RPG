@@ -16,9 +16,9 @@ MonoBehaviour:
   objectiveType: 0
   title: "\u53F2\u83B1\u59C6\u6E05\u7406"
   typeLabel: 
-  objective: "\u51FB\u6740 8 \u53EA\u76EE\u6807\u602A\u7269"
+  objective: "\u51FB\u6740 8 \u53EA\u5927\u53F2\u83B1\u59C6"
   content: "\u5B83\u4EEC\u8EAB\u4E0A\u7684\u9ECF\u6DB2\u662F\u597D\u6750\u6599\u3002"
-  targetMonsterId: slime
+  targetMonsterId: slimebig
   targetItem: {fileID: 0}
   requiredAmount: 8
   rewards:
