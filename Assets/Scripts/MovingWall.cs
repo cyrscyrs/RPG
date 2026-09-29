@@ -56,6 +56,12 @@ public class MovingWall : MonoBehaviour
     private bool canMove = true;
     private float waitTimer;
 
+    // 被 MoveOnce 驱动时：到了目标就停住，不再自己往返
+    private bool stopAfterArrival;
+
+    // MoveOnce 传入的临时速度，不动 Inspector 里的 moveSpeed（否则会把场景弄脏、还可能覆盖你配的值）
+    private float runtimeSpeed = -1f;
+
     #region 生命周期
 
     /// <summary>在编辑器里第一次挂上这个脚本时，把刚自动加上的 Rigidbody2D 配成 Kinematic。</summary>
@@ -134,7 +140,8 @@ public class MovingWall : MonoBehaviour
         }
 
         Vector2 target = headingToEnd ? endPoint : startPoint;
-        Vector2 next = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
+        float speed = runtimeSpeed > 0f ? runtimeSpeed : moveSpeed;
+        Vector2 next = Vector2.MoveTowards(rb.position, target, speed * Time.fixedDeltaTime);
 
         // 用 MovePosition 而不是直接改 transform：这样墙才会正确地挡住 / 推动玩家
         rb.MovePosition(next);
@@ -143,6 +150,15 @@ public class MovingWall : MonoBehaviour
             return;
 
         bool arrivedAtEnd = headingToEnd;
+
+        // 被脚本单次驱动时：到了就停住，不再自己往返
+        if (stopAfterArrival)
+        {
+            stopAfterArrival = false;
+            canMove = false;
+            onReachedEndpoint?.Invoke(arrivedAtEnd);
+            return;
+        }
 
         headingToEnd = !headingToEnd;
         waitTimer = waitTime;
@@ -188,6 +204,24 @@ public class MovingWall : MonoBehaviour
 
     /// <summary>暂停 / 继续移动，可以接拉杆、机关。</summary>
     public void SetMoving(bool _moving) => canMove = _moving;
+
+    /// <summary>
+    /// 单次驱动：朝某一端走一次，到了就停住，之后不再周期性往返。
+    /// 起点 / 终点直接用 Inspector 里配好的 moveOffset，所以移动距离不用在这里重配。
+    /// </summary>
+    /// <param name="_toEnd">true = 去终点，false = 回起点</param>
+    /// <param name="_speed">这一趟的速度（单位/秒）</param>
+    public void MoveOnce(bool _toEnd, float _speed)
+    {
+        if (rb == null)
+            return;
+
+        headingToEnd = _toEnd;
+        runtimeSpeed = Mathf.Max(0.01f, _speed);
+        waitTimer = 0f;
+        stopAfterArrival = true;
+        canMove = true;
+    }
 
     /// <summary>让它停一会儿再继续（比 SetMoving 更常用）。</summary>
     public void PauseFor(float _seconds) => waitTimer = Mathf.Max(waitTimer, _seconds);

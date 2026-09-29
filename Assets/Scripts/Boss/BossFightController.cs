@@ -56,6 +56,9 @@ public class BossFightController : MonoBehaviour
     /// <summary>演出结束、正式开打了没有。</summary>
     public bool FightStarted { get; private set; }
 
+    /// <summary>Boss 的属性（血量 / 死亡状态），升降墙之类的脚本要用它判断时机。</summary>
+    public EnemyStats BossStats => bossStats;
+
     private void Awake()
     {
         bossStats = boss != null ? boss.GetComponent<EnemyStats>() : null;
@@ -92,7 +95,8 @@ public class BossFightController : MonoBehaviour
             return;
         }
 
-        if (introPlayed && !deathHandled && bossStats.isDead)
+        // 只看死没死：哪怕没触发演出（比如隔远了打死的）也要慢放
+        if (!deathHandled && bossStats.isDead)
         {
             deathHandled = true;
             StartCoroutine(DeathRoutine());

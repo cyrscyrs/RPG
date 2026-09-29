@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -25,6 +26,7 @@ public static class BossSceneBuilder
     private const string BossScenePath = "Assets/Scenes/BossScene.unity";
 
     private const string BossName = "死亡使者-戴斯";
+    private const string WhiteSpritePath = "Assets/Graphics/UI/UI_White.png";
     private const string BossPath = "Enemies/Enemy_DeathBringer";
     private const string BossHeadHealthBarPath = BossPath + "/Entity_Status_UI";
 
@@ -39,10 +41,6 @@ public static class BossSceneBuilder
 
     private const float BossX = -4f;
     private const float BossY = 1.25f;
-
-    // 看不见的左侧边界墙
-    private const float LeftWallX = -29f;
-    private const float LeftWallHeight = 26f;
 
     private const float FocusOrthoSize = 5.5f;
     private const float CameraBlendTime = 0.8f;
@@ -62,6 +60,15 @@ public static class BossSceneBuilder
         }
 
         // ---------- 先把旧的 BossScene 收掉并删掉，保证是干净的重新生成 ----------
+        // BossScene 生成后往往会被手工调过（升降墙、地块、数值），重新生成会盖掉它们
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(BossScenePath) != null &&
+            !EditorUtility.DisplayDialog(
+                "Boss 战",
+                "BossScene 已存在。重新生成会整个覆盖它：\n" +
+                "手动摆过的升降墙、改过的地块、调过的数值都会丢。\n\n确定要重新生成吗？",
+                "重新生成", "取消"))
+            return;
+
         Scene existing = SceneManager.GetSceneByPath(BossScenePath);
 
         if (existing.IsValid() && existing.isLoaded)
@@ -111,8 +118,6 @@ public static class BossSceneBuilder
 
         bossGo.transform.position = new Vector3(BossX, BossY, 0f);
         playerGo.transform.position = new Vector3(PlayerSpawnX, PlayerSpawnY, 0f);
-
-        AddLeftWall(boss, playerGo.layer);
 
         // ---------- Boss 头顶血条关掉 ----------
         GameObject headBar = Find(boss, BossHeadHealthBarPath);
@@ -186,6 +191,34 @@ public static class BossSceneBuilder
             fightSerialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        // ---------- 两侧升降墙的调度 ----------
+        // 墙的起点 / 移动距离都是 MovingWall 上配好的，这里只接引用和时机
+        BossArenaWalls arenaWalls = fight.AddComponent<BossArenaWalls>();
+        SerializedObject wallSerialized = new SerializedObject(arenaWalls);
+        wallSerialized.FindProperty("fight").objectReferenceValue = controller;
+
+        SerializedProperty wallArray = wallSerialized.FindProperty("walls");
+        var foundWalls = new System.Collections.Generic.List<Object>();
+
+        foreach (string wallName in new[] { "Level/MovingWallLeft", "Level/MovingWallRight" })
+        {
+            GameObject wallObject = Find(boss, wallName);
+
+            if (wallObject != null)
+                foundWalls.Add(wallObject.GetComponent<MovingWall>());
+        }
+
+        wallArray.arraySize = foundWalls.Count;
+
+        for (int i = 0; i < foundWalls.Count; i++)
+            wallArray.GetArrayElementAtIndex(i).objectReferenceValue = foundWalls[i];
+
+        wallSerialized.ApplyModifiedPropertiesWithoutUndo();
+
+        if (foundWalls.Count == 0)
+            Debug.LogWarning("Boss 战：场景里没有 Level/MovingWallLeft 和 MovingWallRight，升降墙不会被调度。" +
+                             "这两面墙是手摆的，重新生成场景后需要手动接一下。");
+
         EditorSceneManager.MarkSceneDirty(boss);
         EditorSceneManager.SaveScene(boss);
 
@@ -194,19 +227,6 @@ public static class BossSceneBuilder
     }
 
     #region 场景搭建
-
-    private static void AddLeftWall(Scene _scene, int _layer)
-    {
-        GameObject level = Find(_scene, "Level");
-
-        GameObject wall = new GameObject("ArenaLeftWall");
-        wall.transform.SetParent(level != null ? level.transform : null, false);
-        wall.transform.position = new Vector3(LeftWallX, KeepMaxY * 0.5f, 0f);
-        wall.layer = _layer;
-
-        BoxCollider2D collider = wall.AddComponent<BoxCollider2D>();
-        collider.size = new Vector2(1f, LeftWallHeight);
-    }
 
     private static void BuildTitle(Transform _parent, TMP_FontAsset _font, out CanvasGroup _group)
     {
@@ -230,6 +250,9 @@ public static class BossSceneBuilder
         Stretch(RT(root));
 
         CanvasGroup group = root.AddComponent<CanvasGroup>();
+
+        // 血条用纯白底图：Image 用 Filled 类型时必须有 sprite，否则 fillAmount 不生效
+        Sprite white = GetOrCreateWhiteSprite();
         group.alpha = 0f;
         group.blocksRaycasts = false;
         group.interactable = false;
@@ -252,13 +275,16 @@ public static class BossSceneBuilder
         barRect.anchoredPosition = new Vector2(0f, 150f);
 
         Image border = NewImage("Border", bar.transform, new Color(0.84f, 0.71f, 0.4f, 0.85f));
+        border.sprite = white;
         Stretch(RT(border.gameObject), -4f, -4f, -4f, -4f);
 
         Image background = NewImage("Background", bar.transform, new Color(0.05f, 0.05f, 0.07f, 0.92f));
+        background.sprite = white;
         Stretch(RT(background.gameObject));
 
         // 掉血时慢慢追上来的残影
         Image delayFill = NewImage("DelayFill", bar.transform, new Color(1f, 0.85f, 0.5f, 0.75f));
+        delayFill.sprite = white;
         Stretch(RT(delayFill.gameObject), 2f, 2f, 2f, 2f);
         delayFill.type = Image.Type.Filled;
         delayFill.fillMethod = Image.FillMethod.Horizontal;
@@ -266,6 +292,7 @@ public static class BossSceneBuilder
         delayFill.fillAmount = 1f;
 
         Image fill = NewImage("Fill", bar.transform, new Color(0.72f, 0.13f, 0.15f, 1f));
+        fill.sprite = white;
         Stretch(RT(fill.gameObject), 2f, 2f, 2f, 2f);
         fill.type = Image.Type.Filled;
         fill.fillMethod = Image.FillMethod.Horizontal;
@@ -444,6 +471,47 @@ public static class BossSceneBuilder
         image.raycastTarget = false;
 
         return image;
+    }
+
+    /// <summary>血条用的纯白贴图，没有就现生成一张 PNG 资源。</summary>
+    private static Sprite GetOrCreateWhiteSprite()
+    {
+        Sprite existing = AssetDatabase.LoadAssetAtPath<Sprite>(WhiteSpritePath);
+
+        if (existing != null)
+            return existing;
+
+        Texture2D texture = new Texture2D(8, 8, TextureFormat.RGBA32, false);
+        Color32[] pixels = new Color32[64];
+
+        for (int i = 0; i < pixels.Length; i++)
+            pixels[i] = new Color32(255, 255, 255, 255);
+
+        texture.SetPixels32(pixels);
+        texture.Apply();
+
+        File.WriteAllBytes(WhiteSpritePath, texture.EncodeToPNG());
+        Object.DestroyImmediate(texture);
+
+        AssetDatabase.Refresh();
+        AssetDatabase.ImportAsset(WhiteSpritePath, ImportAssetOptions.ForceUpdate);
+
+        TextureImporter importer = AssetImporter.GetAtPath(WhiteSpritePath) as TextureImporter;
+
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = 8f;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+        }
+
+        return AssetDatabase.LoadAssetAtPath<Sprite>(WhiteSpritePath);
     }
 
     private static TMP_FontAsset FindChineseFont()

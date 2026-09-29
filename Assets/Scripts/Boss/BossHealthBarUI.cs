@@ -41,6 +41,9 @@ public class BossHealthBarUI : MonoBehaviour
     private CanvasGroup canvasGroup;
     private float barHeight = 26f;
 
+    // Image.sprite 为空时兜底用的纯白图
+    private static Sprite fallbackFillSprite;
+
     // 0 = 完全收拢，1 = 完全展开
     private float openAmount;
     private bool wantOpen;
@@ -58,7 +61,53 @@ public class BossHealthBarUI : MonoBehaviour
         if (nameText != null)
             nameText.text = bossName;
 
+        PrepareFill(fillImage);
+        PrepareFill(delayFillImage);
+
         HideImmediate();
+    }
+
+    /// <summary>
+    /// 把一张 Image 准备成能按 fillAmount 裁切的填充条。
+    /// 关键点：Image 用 Filled 类型时必须有 sprite，否则 Unity 会直接退化成画一整块白矩形，
+    /// fillAmount 完全不起作用（看起来就是血条永远满）。
+    /// </summary>
+    private static void PrepareFill(Image _image)
+    {
+        if (_image == null)
+            return;
+
+        if (_image.sprite == null)
+        {
+            if (fallbackFillSprite == null)
+                fallbackFillSprite = BuildWhiteSprite();
+
+            _image.sprite = fallbackFillSprite;
+        }
+
+        if (_image.type != Image.Type.Filled)
+        {
+            _image.type = Image.Type.Filled;
+            _image.fillMethod = Image.FillMethod.Horizontal;
+            _image.fillOrigin = (int)Image.OriginHorizontal.Left;
+        }
+    }
+
+    private static Sprite BuildWhiteSprite()
+    {
+        Texture2D texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+        texture.filterMode = FilterMode.Bilinear;
+        texture.wrapMode = TextureWrapMode.Clamp;
+
+        Color32[] pixels = new Color32[16];
+
+        for (int i = 0; i < pixels.Length; i++)
+            pixels[i] = new Color32(255, 255, 255, 255);
+
+        texture.SetPixels32(pixels);
+        texture.Apply();
+
+        return Sprite.Create(texture, new Rect(0f, 0f, 4f, 4f), new Vector2(0.5f, 0.5f), 4f);
     }
 
     /// <summary>立刻收起来，不做动画。</summary>
