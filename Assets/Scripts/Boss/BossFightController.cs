@@ -36,6 +36,13 @@ public class BossFightController : MonoBehaviour
     [Tooltip("镜头对准点的额外偏移，用来对准 Boss 的身体中心")]
     [SerializeField] private Vector2 focusPointOffset = new Vector2(-2.17f, 0.97f);
 
+    [Header("演出音效")]
+    [Tooltip("演出开始时 Boss 的吼声（AudioManager 的 sfx 下标，21 = sfx_mosnter_growl_1；-1 = 不播）")]
+    [SerializeField] private int introRoarSfxIndex = 21;
+
+    [Tooltip("Boss 战 BGM（AudioManager 的 bgm 下标。3 = BGM_nemesis）。演出一开始就起，不等演出结束")]
+    [SerializeField] private int bossBgmIndex = 3;
+
     [Header("演出节奏（秒）")]
     [SerializeField] private float cameraBlendTime = 0.8f;
     [Tooltip("Boss 亮攻击的时长，攻击动画本身 0.92 秒")]
@@ -48,6 +55,9 @@ public class BossFightController : MonoBehaviour
     [SerializeField] private float deathSlowTimeScale = 0.25f;
     [Tooltip("用真实时间算，不受慢放影响")]
     [SerializeField] private float deathSlowDuration = 2.5f;
+
+    [Tooltip("慢放结束后 BGM 淡出到停止的时长（秒）。0 = 立刻停。只改这条 BGM 的音量，不动全局音量设置")]
+    [SerializeField] private float deathBgmFadeDuration = 3f;
 
     private EnemyStats bossStats;
     private bool introPlayed;
@@ -118,6 +128,15 @@ public class BossFightController : MonoBehaviour
     private IEnumerator IntroRoutine()
     {
         introPlayed = true;
+
+        // 演出一开始就把 Boss 战 BGM 起起来（以前整段演出是没音乐的），同时让 Boss 吼一声
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlayBGM(bossBgmIndex);
+
+            if (introRoarSfxIndex >= 0)
+                AudioManager.instance.PlaySFX(introRoarSfxIndex, boss != null ? boss.transform : null);
+        }
 
         player.SetControlLocked(true);
 
@@ -201,6 +220,11 @@ public class BossFightController : MonoBehaviour
         yield return new WaitForSecondsRealtime(deathSlowDuration);
 
         Time.timeScale = originalScale;
+
+        // 慢放结束：BGM 溢淡出到静音后停止。
+        // 只降这一条 BGM 自己的音量，不动全局音量设置（Options 面板那套走 AudioMixer，不受影响）。
+        if (AudioManager.instance != null)
+            AudioManager.instance.FadeOutBGM(deathBgmFadeDuration);
 
         if (healthBar != null)
             healthBar.Hide();

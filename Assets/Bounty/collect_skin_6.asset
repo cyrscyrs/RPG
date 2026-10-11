@@ -19,7 +19,7 @@ MonoBehaviour:
   objective: "\u6536\u96C6 6 \u4E2A \u517D\u76AE"
   content: "\u602A\u7269\u8EAB\u4E0A\u5C31\u80FD\u5265\u5230\u3002"
   targetMonsterId: 
-  targetItem: {fileID: 0}
+  targetItem: {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
   requiredAmount: 6
   rewards:
   - currency: 180

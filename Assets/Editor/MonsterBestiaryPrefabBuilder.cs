@@ -95,6 +95,124 @@ public static class MonsterBestiaryPrefabBuilder
         Debug.Log($"怪物图鉴：已放进场景，父物体是「{parent.name}」。记得保存场景。");
     }
 
+    /// <summary>
+    /// 把已经生成过的面板预制体里的掉落列表原地升级成可滑动列表：
+    /// 在 Box 和原来的 List 之间插一层 Scroll + Viewport（裁切），List 直接当内容用。
+    /// 只动这一块的结构，其余样式一律不碰；重复执行也安全。
+    /// </summary>
+    [MenuItem("Tools/怪物图鉴/把掉落列表升级成滑动列表")]
+    private static void UpgradeDropsListToScrollView()
+    {
+        GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(PanelPath);
+
+        if (asset == null)
+        {
+            EditorUtility.DisplayDialog("怪物图鉴", "还没生成预制体。\n先执行「Tools/怪物图鉴/生成图鉴预制体」。", "好");
+            return;
+        }
+
+        GameObject root = PrefabUtility.LoadPrefabContents(PanelPath);
+
+        Transform list = FindChild(root.transform, "Window/DropsPopup/Box/List");
+
+        if (list == null)
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+            Debug.LogError($"怪物图鉴：在 {PanelPath} 里找不到 Window/DropsPopup/Box/List，没有修改。");
+            return;
+        }
+
+        Transform existingScroll = list.parent != null ? list.parent.parent : null;
+
+        if (list.parent != null && list.parent.GetComponent<RectMask2D>() != null
+            && existingScroll != null && existingScroll.GetComponent<ScrollRect>() != null)
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+            Debug.Log("怪物图鉴：掉落列表已经是滑动列表，不用再升级。");
+            return;
+        }
+
+        RectTransform listRect = (RectTransform)list;
+        Transform box = list.parent;
+
+        // Scroll 直接接管原来 List 的占位
+        GameObject scrollGo = NewUI("Scroll", box);
+        RectTransform scrollRectT = RT(scrollGo);
+        scrollRectT.anchorMin = listRect.anchorMin;
+        scrollRectT.anchorMax = listRect.anchorMax;
+        scrollRectT.pivot = listRect.pivot;
+        scrollRectT.offsetMin = listRect.offsetMin;
+        scrollRectT.offsetMax = listRect.offsetMax;
+
+        ScrollRect scroll = scrollGo.AddComponent<ScrollRect>();
+        scroll.horizontal = false;
+        scroll.vertical = true;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+        scroll.scrollSensitivity = 45f;
+
+        Image catcher = scrollGo.AddComponent<Image>();
+        catcher.color = new Color(0f, 0f, 0f, 0f);
+        catcher.raycastTarget = true;
+
+        GameObject viewport = NewUI("Viewport", scrollGo.transform);
+        Stretch(RT(viewport));
+        viewport.AddComponent<RectMask2D>();
+        scroll.viewport = RT(viewport);
+
+        // 原来的 List 挂到 Viewport 下当内容，改成「顶部对齐、向下撑高」
+        list.SetParent(viewport.transform, false);
+        listRect.anchorMin = new Vector2(0f, 1f);
+        listRect.anchorMax = new Vector2(1f, 1f);
+        listRect.pivot = new Vector2(0.5f, 1f);
+        listRect.offsetMin = Vector2.zero;
+        listRect.offsetMax = Vector2.zero;
+
+        if (list.GetComponent<VerticalLayoutGroup>() == null)
+        {
+            VerticalLayoutGroup layout = list.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+        }
+
+        if (list.GetComponent<ContentSizeFitter>() == null)
+            list.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        scroll.content = listRect;
+
+        MonsterBestiaryUI ui = root.GetComponent<MonsterBestiaryUI>();
+
+        if (ui != null)
+        {
+            SerializedObject serialized = new SerializedObject(ui);
+            SerializedProperty scrollProperty = serialized.FindProperty("dropsScroll");
+
+            if (scrollProperty != null)
+            {
+                scrollProperty.objectReferenceValue = scroll;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        PrefabUtility.SaveAsPrefabAsset(root, PanelPath);
+        PrefabUtility.UnloadPrefabContents(root);
+        AssetDatabase.SaveAssets();
+
+        Debug.Log($"怪物图鉴：掉落列表已升级成可滑动列表（{PanelPath}）。");
+    }
+
+    private static Transform FindChild(Transform _root, string _path)
+    {
+        Transform current = _root;
+
+        foreach (string part in _path.Split('/'))
+            current = current != null ? current.Find(part) : null;
+
+        return current;
+    }
     #endregion
 
     #region 三个预制体的搭建
@@ -254,19 +372,8 @@ public static class MonsterBestiaryPrefabBuilder
         TextMeshProUGUI dropsTitle = NewText("Title", dropsBox.transform, "", 34f, TextAlignmentOptions.Center, AccentColor, _font);
         SetRect(dropsTitle.rectTransform, new Vector2(0.5f, 1f), new Vector2(520f, 50f), new Vector2(0f, -30f));
 
-        GameObject listGo = NewUI("List", dropsBox.transform);
-        Stretch(RT(listGo), 30f, 30f, 100f, 30f);
-
-        RectTransform dropsList = RT(listGo);
-        VerticalLayoutGroup listLayout = listGo.AddComponent<VerticalLayoutGroup>();
-        listLayout.spacing = 8f;
-        listLayout.childAlignment = TextAnchor.UpperCenter;
-        listLayout.childControlWidth = true;
-        listLayout.childControlHeight = true;
-        listLayout.childForceExpandWidth = true;
-        listLayout.childForceExpandHeight = false;
-
-        listGo.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        // 掉落列表做成可滑动的：条目多了就直接拖动 / 滚轮，不会被弹窗截断
+        RectTransform dropsList = BuildVerticalScrollList(dropsBox.transform, 30f, 30f, 100f, 30f, out ScrollRect dropsScroll);
 
         dropsPopup.SetActive(false);
 
@@ -284,6 +391,7 @@ public static class MonsterBestiaryPrefabBuilder
         serialized.FindProperty("dropsPopup").objectReferenceValue = dropsPopup;
         serialized.FindProperty("dropsTitle").objectReferenceValue = dropsTitle;
         serialized.FindProperty("dropsList").objectReferenceValue = dropsList;
+        serialized.FindProperty("dropsScroll").objectReferenceValue = dropsScroll;
         serialized.FindProperty("dropRowPrefab").objectReferenceValue = _rowPrefab;
         serialized.ApplyModifiedPropertiesWithoutUndo();
 
@@ -311,6 +419,11 @@ public static class MonsterBestiaryPrefabBuilder
         viewport.AddComponent<RectMask2D>();
         scroll.viewport = RT(viewport);
 
+        // 透明但能接收射线：鼠标停在格子之间的空白处也能滚轮滚动
+        Image catcher = scrollGo.AddComponent<Image>();
+        catcher.color = new Color(0f, 0f, 0f, 0f);
+        catcher.raycastTarget = true;
+
         GameObject contentGo = NewUI("Content", viewport.transform);
         RectTransform content = RT(contentGo);
         content.anchorMin = new Vector2(0f, 1f);
@@ -330,6 +443,54 @@ public static class MonsterBestiaryPrefabBuilder
         contentGo.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         scroll.content = content;
+
+        return content;
+    }
+
+    /// <summary>
+    /// 竖排的可滑动列表：Scroll → Viewport（裁切）→ List（竖排 + 随内容长高）。
+    /// 掉落物弹窗用它；条目比弹窗高时可以直接拖动 / 滚轮滑动。
+    /// </summary>
+    private static RectTransform BuildVerticalScrollList(Transform _parent, float _left, float _right, float _top, float _bottom, out ScrollRect _scroll)
+    {
+        GameObject scrollGo = NewUI("Scroll", _parent);
+        Stretch(RT(scrollGo), _left, _right, _top, _bottom);
+
+        _scroll = scrollGo.AddComponent<ScrollRect>();
+        _scroll.horizontal = false;
+        _scroll.vertical = true;
+        _scroll.movementType = ScrollRect.MovementType.Clamped;
+        _scroll.scrollSensitivity = 45f;
+
+        // 透明但能接收射线：鼠标停在行与行之间的空白处也能滚轮滚动
+        Image catcher = scrollGo.AddComponent<Image>();
+        catcher.color = new Color(0f, 0f, 0f, 0f);
+        catcher.raycastTarget = true;
+
+        GameObject viewport = NewUI("Viewport", scrollGo.transform);
+        Stretch(RT(viewport));
+        viewport.AddComponent<RectMask2D>();
+        _scroll.viewport = RT(viewport);
+
+        GameObject contentGo = NewUI("List", viewport.transform);
+        RectTransform content = RT(contentGo);
+        content.anchorMin = new Vector2(0f, 1f);
+        content.anchorMax = new Vector2(1f, 1f);
+        content.pivot = new Vector2(0.5f, 1f);
+        content.offsetMin = Vector2.zero;
+        content.offsetMax = Vector2.zero;
+
+        VerticalLayoutGroup layout = contentGo.AddComponent<VerticalLayoutGroup>();
+        layout.spacing = 8f;
+        layout.childAlignment = TextAnchor.UpperCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+
+        contentGo.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        _scroll.content = content;
 
         return content;
     }

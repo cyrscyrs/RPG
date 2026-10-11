@@ -15,6 +15,15 @@ public class AudioManager : MonoBehaviour
 
     private bool canPlaySFX;
 
+    // 每条 BGM 的初始音量，淡出后要能复位。
+    // 淡出只改 AudioSource.volume（这条 BGM 自己的音量），
+    // 不碰 AudioMixer 上的全局音量参数，所以 Options 面板里的音量设置不受影响。
+    private float[] bgmDefaultVolumes;
+
+    // 淡出进行中时不要让 Update 的“停了就续播”插进来；留住句柄也方便被新的 PlayBGM 取消
+    private Coroutine bgmFadeRoutine;
+    private bool bgmFading;
+
     private void Awake()
     {
         // 出现重复实例时把旧的那个整个销毁，然后立刻把 static 指向自己。
@@ -25,11 +34,18 @@ public class AudioManager : MonoBehaviour
 
         instance = this;
 
+        CacheBgmVolumes();
+
         Invoke("AllowSFX", .1f);
     }
 
     private void Update()
     {
+        // 正在淡出时不要插手：否则音量被淡到一半、刚好这首放完了，
+        // 这里的“停了就续播”会把它按原音量重新起一遍，淡出就白做了
+        if (bgmFading)
+            return;
+
         if (!playBgm)
             StopAllBGM();
         else
@@ -104,19 +120,110 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBGM(int _index)
     {
+        if (bgm == null || _index < 0 || _index >= bgm.Length || bgm[_index] == null)
+            return;
+
         bgmIndex = _index;
 
+        // 换 / 重放 BGM 时，先把还没跑完的淡出取消掉
+        CancelBgmFade();
+
         StopAllBGM();
-        bgm[bgmIndex].Play();
+
+        // 上一次可能被淡出过，把这条 BGM 的音量复位成初始值再放
+        if (bgmDefaultVolumes != null && _index < bgmDefaultVolumes.Length)
+            bgm[_index].volume = bgmDefaultVolumes[_index];
+
+        bgm[_index].Play();
+
+        // 开关放最后置 true：StopAllBGM / CancelBgmFade 都会把它清掉，先置会被覆盖
+        playBgm = true;
     }
 
     public void StopAllBGM()
     {
-        for (int i = 0; i < bgm.Length; i++)
+        if (bgm != null)
         {
-            bgm[i].Stop();
+            for (int i = 0; i < bgm.Length; i++)
+            {
+                if (bgm[i] != null)
+                    bgm[i].Stop();
+            }
         }
+
+        // 开关一起关掉，不然 Update 见 playBgm 还是 true 会马上把音乐又起一遍
+        playBgm = false;
     }
 
     private void AllowSFX() => canPlaySFX = true;
+
+    /// <summary>记下每条 BGM 的初始音量，供淡出后复位。</summary>
+    private void CacheBgmVolumes()
+    {
+        if (bgm == null)
+            return;
+
+        bgmDefaultVolumes = new float[bgm.Length];
+
+        for (int i = 0; i < bgm.Length; i++)
+        {
+            if (bgm[i] != null)
+                bgmDefaultVolumes[i] = bgm[i].volume;
+        }
+    }
+
+    /// <summary>
+    /// 把当前正在播的 BGM 在 _duration 秒内淡出到静音，然后停掉。
+
+    /// 只改这条 AudioSource 自己的 volume，不碰 AudioMixer 的全局音量参数，
+    /// 所以 Options 面板里玩家设的音量不会被这次淡出改掉。
+    /// 用真实时间计时，慢放（timeScale &lt; 1）时长度也符合预期。
+    /// </summary>
+    public void FadeOutBGM(float _duration)
+    {
+        CancelBgmFade();
+
+        if (bgm == null || bgmIndex < 0 || bgmIndex >= bgm.Length || bgm[bgmIndex] == null)
+        {
+            playBgm = false;
+            return;
+        }
+
+        bgmFading = true;
+        bgmFadeRoutine = StartCoroutine(FadeOutBGMCoroutine(bgm[bgmIndex], Mathf.Max(0.01f, _duration)));
+    }
+
+    private IEnumerator FadeOutBGMCoroutine(AudioSource _source, float _duration)
+    {
+        float startVolume = _source.volume;
+        float time = 0f;
+
+        while (time < _duration)
+        {
+            time += Time.unscaledDeltaTime;
+
+            _source.volume = Mathf.Lerp(startVolume, 0f, Mathf.Clamp01(time / _duration));
+
+            yield return null;
+        }
+
+        _source.Stop();
+        _source.volume = startVolume;   // 复位：之后同一个 AudioManager 再放这首时不会还是静音
+
+        playBgm = false;                // 关掉开关，Update 就不会又把它续播起来
+        bgmFading = false;
+        bgmFadeRoutine = null;
+    }
+
+    /// <summary>取消正在进行的 BGM 淡出，把状态清干净。</summary>
+    private void CancelBgmFade()
+    {
+        if (bgmFadeRoutine != null)
+        {
+            StopCoroutine(bgmFadeRoutine);
+            bgmFadeRoutine = null;
+        }
+
+        bgmFading = false;
+    }
 }

@@ -94500,6 +94500,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 721516277}
     - target: {fileID: 4143316699176359399, guid: 8214725fc85210d43afece99869ad3ea, type: 3}
+      propertyPath: bgmIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143316699176359399, guid: 8214725fc85210d43afece99869ad3ea, type: 3}
       propertyPath: sfx.Array.size
       value: 62
       objectReference: {fileID: 0}

@@ -36,6 +36,8 @@ public class MonsterBestiaryUI : MonoBehaviour
     [SerializeField] private GameObject dropsPopup;
     [SerializeField] private TextMeshProUGUI dropsTitle;
     [SerializeField] private RectTransform dropsList;
+    [Tooltip("掉落列表的滚动框：条目比弹窗高时可以直接拖动 / 滚轮滑动")]
+    [SerializeField] private ScrollRect dropsScroll;
     [SerializeField] private MonsterBestiaryDropRow dropRowPrefab;
 
     [Header("按键（独立模式才由本脚本处理）")]
@@ -373,6 +375,13 @@ public class MonsterBestiaryUI : MonoBehaviour
         }
 
         dropsPopup.SetActive(true);
+
+        // 滑动列表回到顶部。内容高度是这一帧才排出来的，先强制刷新一下布局再设位置
+        if (dropsScroll != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            dropsScroll.verticalNormalizedPosition = 1f;
+        }
     }
 
     private void CreateDropRow(Sprite _icon, string _name, string _chance)
