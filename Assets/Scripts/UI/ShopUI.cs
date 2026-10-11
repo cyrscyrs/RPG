@@ -106,6 +106,10 @@ public class ShopUI : MonoBehaviour
         windowRoot.SetActive(true);
         SetPaused(true);
         Refresh();
+
+        // 普通 UI 打开声（7）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(7, null);
     }
 
     public void Close()
@@ -273,6 +277,10 @@ public class ShopUI : MonoBehaviour
 
         if (!PlayerManager.instance.HaveEnoughCurrency(total))
             return;
+
+        // 商店购买（46）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(46, null);
 
         for (int i = 0; i < quantity; i++)
             Inventory.instance.AddItem(selected.item);

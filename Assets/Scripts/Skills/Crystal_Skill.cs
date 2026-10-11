@@ -148,6 +148,10 @@ public class Crystal_Skill : Skill
         Crystal_Skill_Controller currentCrystalScript = currentCrystal.GetComponent<Crystal_Skill_Controller>();
 
         currentCrystalScript.SetupCrystal(player, crystalDuration, canExplode, canMoveToEnemy, moveSpeed, FindClosestEnemy(currentCrystal.transform));
+
+        // 水晶生成（39）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(39, player.transform);
     }
 
     public void CurrentCrystalChooseRandomTarget() => currentCrystal.GetComponent<Crystal_Skill_Controller>().ChooseRandomEnemy();
@@ -167,6 +171,10 @@ public class Crystal_Skill : Skill
 
                 newCrystal.GetComponent<Crystal_Skill_Controller>().
                     SetupCrystal(player, crystalDuration,canExplode,canMoveToEnemy,moveSpeed,FindClosestEnemy(newCrystal.transform));
+
+                // 水晶生成（39）
+                if (AudioManager.instance != null)
+                    AudioManager.instance.PlaySFX(39, player.transform);
 
                 return true;
 

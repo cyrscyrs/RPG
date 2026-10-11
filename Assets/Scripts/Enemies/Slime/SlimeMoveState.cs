@@ -11,6 +11,10 @@ public class SlimeMoveState : SlimeGroundedState
     public override void Enter()
     {
         base.Enter();
+
+        // 史莱姆移动声（38）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(38, enemy.transform);
     }
 
     public override void Exit()

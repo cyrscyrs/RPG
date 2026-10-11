@@ -38,10 +38,12 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
+        // 出现重复实例时把旧的那个销毁，然后立刻把 static 指向自己。
+        // 少了后面那句赋值，静态字段会继续指着一个已经销毁的对象。
+        if (instance != null && instance != this)
             Destroy(instance.gameObject);
-        else
-            instance = this;
+
+        instance = this;
 
         // Start 之前就可能有人用到，先把读取器建好
         if (dataHandler == null)
@@ -74,7 +76,17 @@ public class SaveManager : MonoBehaviour
 
         foreach(ISaveManager saveManage in SaveManagers)
         {
-            saveManage.LoadData(gameData);
+            // 单个存档组件报错不能把后面的人全拖下水：以前这里一个异常就会中断循环，
+            // 结果是同一次读档里排在前面的对象读到了、后面的（玩家 / 存档点 / 技能树）没读到，
+            // 看起来就成了「读档结果和进门时不一样」。
+            try
+            {
+                saveManage.LoadData(gameData);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"读档时「{Describe(saveManage)}」报错，已跳过它继续读：\n{e}");
+            }
         }
     }
 
@@ -93,7 +105,14 @@ public class SaveManager : MonoBehaviour
 
         foreach(ISaveManager saveManager in SaveManagers)
         {
-            saveManager.SaveData(ref gameData);
+            try
+            {
+                saveManager.SaveData(ref gameData);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"存档时「{Describe(saveManager)}」报错，已跳过它继续存：\n{e}");
+            }
         }
 
         dataHandler.Save(gameData);
@@ -106,9 +125,38 @@ public class SaveManager : MonoBehaviour
 
     private List<ISaveManager> FindAllSaveManagers()
     {
-        IEnumerable<ISaveManager> saveManagers = FindObjectsOfType<MonoBehaviour>().OfType<ISaveManager>();
+        // includeInactive = true：技能树、没激活的墙体/面板上的存档组件经常是关着的，
+        // 默认的 FindObjectsOfType 会跳过它们，导致这些数据读不到、也存不上。
+        IEnumerable<ISaveManager> saveManagers = FindObjectsOfType<MonoBehaviour>(true).OfType<ISaveManager>();
 
         return new List<ISaveManager>(saveManagers);
+    }
+
+    /// <summary>报错信息里给这个存档组件一个能认出来的名字。</summary>
+    private static string Describe(ISaveManager _manager)
+    {
+        if (_manager is Component c && c != null)
+            return c.GetType().Name + " on " + c.gameObject.name;
+
+        return _manager == null ? "<null>" : _manager.GetType().Name;
+    }
+
+
+    /// <summary>
+    /// 只看一眼存档里记的是哪个场景，不做完整读档（主菜单「继续游戏」要用）。
+    /// 没存档、或者老存档没记这个字段时返回 null。
+    /// </summary>
+    public string PeekSavedSceneName()
+    {
+        if (gameData != null)
+            return gameData.lastSceneName;
+
+        if (dataHandler == null)
+            dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
+
+        GameData data = dataHandler.Load();
+
+        return data != null ? data.lastSceneName : null;
     }
 
     public bool HasSavedData()

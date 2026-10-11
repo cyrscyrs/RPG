@@ -150,6 +150,10 @@ public class BountyBoardUI : MonoBehaviour
         windowRoot.SetActive(true);
         SetPaused(true);
         Refresh();
+
+        // 普通 UI 打开声（7）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(7, null);
     }
 
     public void Close()
@@ -198,13 +202,21 @@ public class BountyBoardUI : MonoBehaviour
             currencyText.text = $"金币：{(PlayerManager.instance != null ? PlayerManager.instance.GetCurrency() : 0)}" +
                                 $"　已接 {board.AcceptedCount} / {board.MaxAccepted}";
 
+        // T 键打开的是「只看自己接了的任务」，不给刷新；要刷新去赏金猎人那儿
+        if (refreshButton != null)
+            refreshButton.gameObject.SetActive(!acceptedOnly);
+
         if (refreshLabel != null)
-            refreshLabel.text = board.CanRefreshFree() ? "刷新（免费）" : $"刷新（{board.RefreshCost} 金币）";
+        {
+            if (!board.CanRefresh)
+                refreshLabel.text = "刷新（有未完成的任务）";
+            else
+                refreshLabel.text = board.CanRefreshFree() ? "刷新（免费）" : $"刷新（{board.RefreshCost} 金币）";
+        }
 
         if (refreshButton != null)
-            refreshButton.interactable = board.CanRefreshFree() ||
-                (PlayerManager.instance != null && PlayerManager.instance.GetCurrency() >= board.RefreshCost);
-
+            refreshButton.interactable = board.CanRefresh &&
+                (board.CanRefreshFree() || (PlayerManager.instance != null && PlayerManager.instance.GetCurrency() >= board.RefreshCost));
         int shown = 0;
 
         foreach (BountyQuest quest in board.Offers)
@@ -265,16 +277,25 @@ public class BountyBoardUI : MonoBehaviour
         else
         {
             buttonLabel = "接取任务";
-            buttonEnabled = _board.CanAcceptMore;
+            // T 键打开的面板只能看和提交，不能接任务
+            buttonEnabled = !acceptedOnly && _board.CanAcceptMore;
             color = new Color(0.16f, 0.18f, 0.24f, 0.98f);
         }
 
         BountyQuestSlot slot = Instantiate(slotPrefab, listRoot);
         BountyQuest captured = _quest;
 
+        // 放弃：接了但还没打完的才能放弃（打完了得先去提交，提交过的不能动）
+        bool canAbandon = accepted && !submitted && !ready;
+        UnityEngine.Events.UnityAction onAbandon = null;
+
+        if (canAbandon)
+            onAbandon = () => OnAbandonClicked(captured);
+
         slot.Setup(_quest, string.IsNullOrEmpty(_quest.title) ? _quest.GetId() : _quest.title,
             info, progressText, reward, buttonLabel, buttonEnabled, color,
-            () => OnSlotClicked(captured));
+            () => OnSlotClicked(captured),
+            onAbandon);
     }
 
     private static string BuildRewardText(BountyQuest _quest)
@@ -320,6 +341,10 @@ public class BountyBoardUI : MonoBehaviour
 
         if (!board.IsAccepted(_quest))
         {
+            // T 键打开的面板不给接任务，得去找赏金猎人
+            if (acceptedOnly)
+                return;
+
             if (board.Accept(_quest))
                 Debug.Log($"已接取任务：{_quest.title}");
             else
@@ -327,6 +352,22 @@ public class BountyBoardUI : MonoBehaviour
 
             Refresh();
         }
+    }
+
+    /// <summary>放弃任务：进度清零、变回可接取。两个面板都能用。</summary>
+    private void OnAbandonClicked(BountyQuest _quest)
+    {
+        BountyBoard board = BountyBoard.Instance;
+
+        if (board == null || _quest == null)
+            return;
+
+        if (board.Abandon(_quest))
+            Debug.Log($"已放弃任务：{_quest.title}");
+        else
+            Debug.Log("放弃失败：已经完成的任务不能放弃，先去提交。");
+
+        Refresh();
     }
 
     private void OnRefreshClicked()

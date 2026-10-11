@@ -35,7 +35,7 @@ public class DestructibleWall : MonoBehaviour, ISaveManager, IHittable
     [Tooltip("摧毁特效预制体")]
     [SerializeField] private GameObject destroyFXPrefab;
     [Tooltip("受击音效在 AudioManager 里的下标，-1 表示不播放")]
-    [SerializeField] private int hitSFXIndex = -1;
+    [SerializeField] private int hitSFXIndex = 40;
     [Tooltip("摧毁音效在 AudioManager 里的下标，-1 表示不播放")]
     [SerializeField] private int destroySFXIndex = -1;
     [Tooltip("特效物体的自动销毁时间（秒）")]
@@ -116,6 +116,10 @@ public class DestructibleWall : MonoBehaviour, ISaveManager, IHittable
         isDestroyed = true;
         currentHits = Mathf.Max(currentHits, hitsToDestroy);
 
+        // 读档时可能这条墙还没被激活过（Awake 没跑），缓存是空的；这里补一次
+        if (wallColliders == null || wallRenderers == null)
+            CacheWallParts();
+
         if (_playFX)
         {
             PlaySFX(destroySFXIndex);
@@ -150,7 +154,8 @@ public class DestructibleWall : MonoBehaviour, ISaveManager, IHittable
 
     private void PlayHitFeedback()
     {
-        PlaySFX(hitSFXIndex);
+        // 受击音效（40）：Inspector 里没配过（-1）就用默认的 40
+        PlaySFX(hitSFXIndex >= 0 ? hitSFXIndex : 40);
         SpawnFX(hitFXPrefab);
 
         if (mainRenderer == null || hitStageSprites == null)

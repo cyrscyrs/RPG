@@ -67,13 +67,27 @@ public class EnemyStats : CharacterStats
 
     public override void TakeDamage(int _damage)
     {
-        base.TakeDamage(_damage);
+        TakeDamage(_damage, DamageType.Physical);
+    }
+
+    public override void TakeDamage(int _damage, DamageType _type)
+    {
+        // 怪物受击音效（58）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(58, transform);
+
+        base.TakeDamage(_damage, _type);
         enemy.DamegedEffect();
     }
 
     protected override void Die()
     {
         base.Die();
+
+        // 怪物死亡喊声（20）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(20, transform);
+
         MonsterBestiary.NotifyKill(MonsterId);   // 图鉴：累计击杀 +1
         BountyBoard.NotifyKill(MonsterId);       // 赏金任务：猎杀型任务进度
         KillStreakBuffManager.NotifyKill(MonsterId);   // 连续杀敌加速：连击进度

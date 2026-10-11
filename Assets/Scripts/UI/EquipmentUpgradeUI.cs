@@ -102,6 +102,10 @@ public class EquipmentUpgradeUI : MonoBehaviour
         windowRoot.SetActive(true);
         SetPaused(true);
         Refresh();
+
+        // 普通 UI 打开声（7）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(7, null);
     }
 
     public void Close()
@@ -267,7 +271,40 @@ public class EquipmentUpgradeUI : MonoBehaviour
         AddPreviewLine(lines, "冰伤", _item.iceDamage, _item, _level);
         AddPreviewLine(lines, "雷伤", _item.lightningDamage, _item, _level);
 
+        AddMilestoneLines(lines, _item, _level);
+
         return lines.Count > 0 ? string.Join("\n", lines) : "这件装备没有属性成长。";
+    }
+
+    /// <summary>
+    /// 补上 10 / 20 级里程碑的说明：
+    /// - 下一级正好是里程碑（9 级升 10、19 级升 20）时，高亮写清这一级解锁的额外特性；
+    /// - 还没到、也不是下一级的里程碑，用短名列在后面，让玩家知道后面还有什么。
+    /// </summary>
+    private void AddMilestoneLines(List<string> _lines, ItemData_Equipment _item, int _level)
+    {
+        int nextLevel = _level + 1;
+
+        foreach (int milestone in Manager.GetMilestones(_item))
+        {
+            if (_level >= milestone)
+                continue;   // 已经拿到的不再重复显示
+
+            if (milestone == nextLevel)
+            {
+                string description = Manager.GetMilestoneDescription(_item, milestone);
+
+                if (!string.IsNullOrEmpty(description))
+                    _lines.Add($"<color=#ffd24a>★ 升到 {milestone} 级：{description}</color>");
+
+                continue;
+            }
+
+            string summary = Manager.GetMilestoneSummary(_item, milestone);
+
+            if (!string.IsNullOrEmpty(summary))
+                _lines.Add($"{milestone} 级：{summary}");
+        }
     }
 
     private void AddPreviewLine(List<string> _lines, string _label, int _baseValue, ItemData_Equipment _item, int _level)
@@ -337,7 +374,13 @@ public class EquipmentUpgradeUI : MonoBehaviour
 
         // 检查资源、扣材料与金币、升级都放在 EquipmentLevelManager 里
         if (Manager.TryUpgrade(selected))
+        {
             Debug.Log($"强化成功：{Manager.GetDisplayName(selected)}");
+
+            // 装备强化（0）
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(0, null);
+        }
 
         Refresh();
     }

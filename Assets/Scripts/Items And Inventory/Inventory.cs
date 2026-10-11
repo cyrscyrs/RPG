@@ -47,7 +47,17 @@ public class Inventory : MonoBehaviour, ISaveManager
             instance = this;
         else
             Destroy(gameObject);
+
+        // 读档数据先存在这两个列表里，LoadData 可能早于 Start 被调用，先保证它们不是 null
+        if (loadedItems == null)
+            loadedItems = new List<InventoryItem>();
+
+        if (loadedEquipments == null)
+            loadedEquipments = new List<ItemData_Equipment>();
     }
+
+    // 背包只铺一次：存档数据就绪后铺存档，没有存档才铺初始装备
+    private bool inventoryApplied;
 
     private void Start()
     {
@@ -65,7 +75,21 @@ public class Inventory : MonoBehaviour, ISaveManager
         equipmentSlot = equipmentSlotParent.GetComponentsInChildren<UI_EquipmentSlot>();
         statSlot = statSlotParent.GetComponentsInChildren<UI_StatSlot>();
 
-        //Invoke(nameof(AddStartingItems), 1.1f);
+        // SaveManager 在它自己的 Start 里调用 LoadData，而 Unity 不保证两个 Start 谁先谁后。
+        // 如果 Inventory.Start 比 SaveManager.Start 早，这时的 loadedItems/loadedEquipments 还是空的，
+        // 直接 AddStartingItems() 就会把默认初始装备铺进去、把档里的真实背包丢掉（进门换场景时最明显）。
+        // 所以等这一帧所有 Start 都跑完再决定：有存档数据就铺存档，没有才铺初始装备。
+        StartCoroutine(ApplyInventoryAfterLoad());
+    }
+
+    private System.Collections.IEnumerator ApplyInventoryAfterLoad()
+    {
+        yield return null;
+
+        if (inventoryApplied)
+            yield break;
+
+        inventoryApplied = true;
         AddStartingItems();
     }
 
@@ -153,12 +177,17 @@ public class Inventory : MonoBehaviour, ISaveManager
             stashItemSlot[i].CleanUpSlot();
         }
 
-        for (int i = 0; i < inventory.Count; i++)
+        // 背包 / 仓库的格子是固定数量的池子，物品种类数可能超过格子数，取两者较小值防止越界
+        int inventorySlotCount = Mathf.Min(inventory.Count, inventoryItemSlot.Length);
+
+        for (int i = 0; i < inventorySlotCount; i++)
         {
             inventoryItemSlot[i].UpdateSlot(inventory[i]);
         }
 
-        for (int i = 0; i < stash.Count; i++)
+        int stashSlotCount = Mathf.Min(stash.Count, stashItemSlot.Length);
+
+        for (int i = 0; i < stashSlotCount; i++)
         {
             stashItemSlot[i].UpdateSlot(stash[i]);
         }
@@ -374,6 +403,10 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public void LoadData(GameData _data)
     {
+        // 先把上一次可能残留的清掉，避免重复读档时叠起来
+        loadedItems.Clear();
+        loadedEquipments.Clear();
+
         foreach (KeyValuePair<string, int> pair in _data.inventory)
         {
             foreach (var item in itemDataBase)

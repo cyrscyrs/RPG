@@ -10,11 +10,18 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private Slider slider;
 
+    [Header("掉血残影")]
+    [Tooltip("扣掉的那段血量先用这个颜色填着，再慢慢缩回去（黄色）")]
+    [SerializeField] private Color damageFillColor = new Color(1f, 0.83f, 0.2f, 1f);
+    [Tooltip("扣血后先停多久再开始缩（秒）")]
+    [SerializeField] private float damageHoldTime = 0.18f;
+    [Tooltip("收缩速度：每秒缩掉最大血量的百分之多少")]
+    [SerializeField] private float damageDrainSpeed = 0.35f;
+
     [SerializeField] private Image dashImage;
     [SerializeField] private Image parryImage;
     [SerializeField] private Image crystalImage;
     [SerializeField] private Image swordImage;
-    [SerializeField] private bool swordBeginCooldown = false;
     [SerializeField] private Image blackholeImage;
     [SerializeField] private Image flaskImage;
 
@@ -30,8 +37,22 @@ public class UI_InGame : MonoBehaviour
             playerStats.OnHP_Changed += UpdateHealthUI;
 
         skills = SkillManager.instance;
+        SetupHealthBarDamageFill();
 
-        PlayerManager.instance.player.catchSword.catchTheSword += SwordBeginCooldown;
+    }
+
+    /// <summary>给屏幕上的玩家血条也加上「掉血残影」（黄色慢慢缩）。</summary>
+    private void SetupHealthBarDamageFill()
+    {
+        if (slider == null)
+            return;
+
+        UI_HealthBarDelay delay = slider.GetComponent<UI_HealthBarDelay>();
+
+        if (delay == null)
+            delay = slider.gameObject.AddComponent<UI_HealthBarDelay>();
+
+        delay.Configure(damageFillColor, damageHoldTime, damageDrainSpeed);
     }
 
 
@@ -48,11 +69,6 @@ public class UI_InGame : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && skills.crystal.crystalUnlocked)
             SetCooldownOf(crystalImage);
 
-        if (Input.GetKeyUp(KeyCode.Mouse1) && skills.sword.swordUnlocked && skills.sword.CanUseSkill())
-        {
-            swordBeginCooldown = false;
-            SetCooldownOf(swordImage);
-        }
 
         if (Input.GetKeyDown(KeyCode.R) && skills.blackhole.blackholeUnlocked)
             SetCooldownOf(blackholeImage);
@@ -65,8 +81,7 @@ public class UI_InGame : MonoBehaviour
         CheckCooldownOf(parryImage, skills.parry.cooldown);
         CheckCooldownOf(crystalImage, skills.crystal.cooldown);
         
-        if (swordBeginCooldown)
-            CheckCooldownOf(swordImage, skills.sword.cooldown);
+        UpdateSwordCooldownUI();
         
         CheckCooldownOf(blackholeImage, skills.blackhole.cooldown);
 
@@ -103,15 +118,23 @@ public class UI_InGame : MonoBehaviour
         }
     }
 
-    private void SwordBeginCooldown()
+    // 剑的冷却图标按当前状态驱动，不再依赖 catchTheSword 事件：
+    // 那个事件只在 Start 里订阅、在 OnDisable 里退订，而打开任意菜单都会把 InGame_UI
+    // 整个 SetActive(false)，回来时 Start 不会再跑，订阅就永久丢了，图标从此不动。
+    // 现在：剑飞在外面 = 满格；剑回到手上 = 跟着 cooldownTimer 逐渐走完。
+    private void UpdateSwordCooldownUI()
     {
-        Debug.Log("sword begin cooldown");
-        swordBeginCooldown = true;
-        //CheckCooldownOf(swordImage, skills.sword.cooldown);
-    }
+        if (swordImage == null || skills == null || skills.sword == null)
+            return;
 
-    private void OnDisable()
-    {
-        PlayerManager.instance.player.catchSword.catchTheSword -= SwordBeginCooldown;
+        if (skills.sword.sword != null)
+        {
+            // 剑还在外面飞，这段时间用不了
+            swordImage.fillAmount = 1f;
+            return;
+        }
+
+        float cooldown = Mathf.Max(0.0001f, skills.sword.cooldown);
+        swordImage.fillAmount = Mathf.Clamp01(skills.sword.cooldownTimer / cooldown);
     }
 }

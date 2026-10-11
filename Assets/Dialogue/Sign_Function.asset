@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8e3f28b6fb3f41a863a2091b97957, type: 3}
+  m_Name: Sign_Function
+  m_EditorClassIdentifier: 
+  dialogueId: sign_fuction
+  onceOnly: 0
+  hideChosenChoices: 1
+  nodes:
+  - nodeId: n1
+    speaker: "\u544A\u793A\u724C"
+    text: "\u6309C\u952E\u6253\u5F00\u89D2\u8272\u9762\u677F\uFF0CB\u952E\u6253\u5F00\u5236\u4F5C\u9762\u677F\uFF0CK\u952E\u6253\u5F00\u6280\u80FD\u6811\u9762\u677F\uFF0CO\u952E\u6253\u5F00\u9009\u9879\u9762\u677F\uFF0CL\u952E\u6253\u5F00\u56FE\u9274\uFF0CT\u952E\u6253\u5F00\u4EFB\u52A1\u9762\u677F"
+    nextNodeId: 
+    choices: []

@@ -52,7 +52,8 @@ public class ShockStrike_Controller : MonoBehaviour
     private void DamageAndSelfDestroy()
     {
         targetStats.ApplyShock(targetStats, true);
-        targetStats.TakeDamage(damage);
+        // 雷击连锁伤害，数字用黄色
+        targetStats.TakeDamage(damage, DamageType.Lightning);
         Destroy(gameObject, .4f);
     }
 }

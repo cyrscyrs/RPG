@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5054465371707947148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2306779272843831779}
+  - component: {fileID: 3735531249414628687}
+  - component: {fileID: 729336563114407724}
+  - component: {fileID: 7481269824138890860}
+  - component: {fileID: 8265736106840574047}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2306779272843831779
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054465371707947148}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3735531249414628687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054465371707947148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80f045ed532c708428a2cc04206ad1d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingItems:
+  - {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
+  - {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
+  - {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
+  - {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
+  - {fileID: 11400000, guid: ad5ba181c0b2a42488b2e838ab4cb8dd, type: 2}
+  - {fileID: 11400000, guid: bbce9a05260268240b6a9604376a55de, type: 2}
+  - {fileID: 11400000, guid: a73d0a1d25b816443ae2861cd99827f7, type: 2}
+  - {fileID: 11400000, guid: a884a4f7e1c630840971d9fd9713c780, type: 2}
+  - {fileID: 11400000, guid: c223e530d39bd344188bb61a0453fb22, type: 2}
+  - {fileID: 11400000, guid: dc5f689bcb10727449f199f3d6ff9eea, type: 2}
+  - {fileID: 11400000, guid: 70695df870da4fb478fc4f563ec1e53c, type: 2}
+  - {fileID: 11400000, guid: f101a65353c0fad4fba3c6d30bb82f27, type: 2}
+  - {fileID: 11400000, guid: 0f5a3ad783566964d87136ea9e6a5acc, type: 2}
+  - {fileID: 11400000, guid: b4c8991615dc6bf4c9760faa2c163ece, type: 2}
+  - {fileID: 11400000, guid: 0d01426fccbe48847b317c8f9cd66483, type: 2}
+  - {fileID: 11400000, guid: af6907b5f5641004e94bc6ebdc1c6474, type: 2}
+  equipment: []
+  inventory: []
+  stash: []
+  inventorySlotParent: {fileID: 0}
+  stashSlotParent: {fileID: 0}
+  equipmentSlotParent: {fileID: 0}
+  statSlotParent: {fileID: 0}
+  itemDataBase:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: dc5f689bcb10727449f199f3d6ff9eea, type: 2}
+  - {fileID: 11400000, guid: 88c04e29a0c46f34a99d39f60f1fcdff, type: 2}
+  - {fileID: 11400000, guid: c01f40659ae6b924a94314d94f957726, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: af6907b5f5641004e94bc6ebdc1c6474, type: 2}
+  - {fileID: 11400000, guid: ad5ba181c0b2a42488b2e838ab4cb8dd, type: 2}
+  - {fileID: 11400000, guid: 0d01426fccbe48847b317c8f9cd66483, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: b4c8991615dc6bf4c9760faa2c163ece, type: 2}
+  - {fileID: 11400000, guid: 0f5a3ad783566964d87136ea9e6a5acc, type: 2}
+  - {fileID: 11400000, guid: f101a65353c0fad4fba3c6d30bb82f27, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 70695df870da4fb478fc4f563ec1e53c, type: 2}
+  - {fileID: 11400000, guid: c223e530d39bd344188bb61a0453fb22, type: 2}
+  - {fileID: 11400000, guid: 92b13e827e1cd55488baa1e9146c54b8, type: 2}
+  - {fileID: 11400000, guid: bbce9a05260268240b6a9604376a55de, type: 2}
+  - {fileID: 11400000, guid: a884a4f7e1c630840971d9fd9713c780, type: 2}
+  - {fileID: 11400000, guid: a73d0a1d25b816443ae2861cd99827f7, type: 2}
+  - {fileID: 11400000, guid: 47d9554059b6b914bba810a26127fc88, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
+  - {fileID: 11400000, guid: 40061ae2fdcaaf6478db18d5aeab5ab5, type: 2}
+  - {fileID: 11400000, guid: 932c53d5fb11ea043a41614592a2346e, type: 2}
+  loadedItems: []
+  loadedEquipments: []
+--- !u!222 &729336563114407724
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054465371707947148}
+  m_CullTransparentMesh: 1
+--- !u!114 &7481269824138890860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054465371707947148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cb1909e117345b4982b30a7f2633bf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 6a2e2dbd11e9e104eb2b354d7ed053e9, type: 2}
+  saveImmediatelyOnLevelChange: 1
+--- !u!114 &8265736106840574047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054465371707947148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64647331c77e0d248ac517ea2c4eb9ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pool:
+  - {fileID: 11400000, guid: 6baa238efce3b704abcbb95aeabfbdca, type: 2}
+  - {fileID: 11400000, guid: d341471af1f0d3b45a48665073c68239, type: 2}
+  - {fileID: 11400000, guid: 87eda7b0e3fa1cb43ae1eb8b306d76a4, type: 2}
+  - {fileID: 11400000, guid: bfdf9ec38e30aaf4b995495f7ab719d4, type: 2}
+  - {fileID: 11400000, guid: 8665ccc504c2eaa48972f04aebf8eb2c, type: 2}
+  offerCount: 3
+  refreshCost: 100
+  maxAccepted: 5
+  saveImmediately: 1

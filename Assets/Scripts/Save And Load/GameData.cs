@@ -36,10 +36,18 @@ public class GameData
     public SerializableDictionary<string, bool> bountySubmitted;
     public SerializableDictionary<string, int> bountyProgress;
 
+    // 宝箱：key = 宝箱 ID，value = 是否已经打开过（决定第一次奖励还给不给）
+    public SerializableDictionary<string, bool> openedChests;
+
 
     public int lostCurrencyAmount;
     public float lostPositionX;
     public float lostPositionY;
+
+    // 最近一次存档时玩家所在的场景。主菜单的「继续游戏」靠它决定该进哪个场景
+    // （进哪个场景 + closestCheckpointId，就是「最新存档的场景 + 存档位置」）。
+    // 老存档没有这个字段，读出来是 null，调用方退回默认场景。
+    public string lastSceneName;
 
     public Vector3 lastGroundedPos;
 
@@ -50,6 +58,7 @@ public class GameData
         this.lostCurrencyAmount = 0;
         this.lostPositionX = 0;
         this.lostPositionY = 0;
+        lastSceneName = string.Empty;
         lastGroundedPos = new Vector3(0, 0);
 
         this.currency = 0;
@@ -72,6 +81,8 @@ public class GameData
         bountyAccepted = new SerializableDictionary<string, bool>();
         bountySubmitted = new SerializableDictionary<string, bool>();
         bountyProgress = new SerializableDictionary<string, int>();
+
+        openedChests = new SerializableDictionary<string, bool>();
 
         volumeSettings = new SerializableDictionary<string, float>();
 

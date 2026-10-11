@@ -41,6 +41,25 @@ public class BountyBoard : MonoBehaviour, ISaveManager
     public bool CanAcceptMore => accepted.Count < MaxAccepted;
     public int RefreshCost => Mathf.Max(0, refreshCost);
 
+    /// <summary>
+    /// 有没有「已经接取但还没提交」的任务（已经打完、还没提交的也算）。
+    /// 有的话就不让刷新：刷新会把挂出来的任务整个换掉，这些任务就从列表上消失了，
+    /// 之后就交不了，只能先去赏金猎人那里提交或放弃。
+    /// </summary>
+    public bool HasUnfinishedAccepted()
+    {
+        foreach (BountyQuest quest in offers)
+        {
+            if (quest != null && IsAccepted(quest) && !IsSubmitted(quest))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>现在能不能刷新任务列表。</summary>
+    public bool CanRefresh => !HasUnfinishedAccepted();
+
     #region 生命周期
 
     private void Awake()
@@ -186,6 +205,27 @@ public class BountyBoard : MonoBehaviour, ISaveManager
         return true;
     }
 
+    /// <summary>
+    /// 放弃任务：取消接取并把进度清零，任务回到「可接取」状态。
+    /// 已经完成的不能放弃（进度满了得先去提交领奖励，已经提交过的更不用说了）。
+    /// </summary>
+    public bool Abandon(BountyQuest _quest)
+    {
+        if (_quest == null || !IsAccepted(_quest) || IsSubmitted(_quest))
+            return false;
+
+        if (CanSubmit(_quest))
+            return false;
+
+        accepted.Remove(_quest.GetId());
+        progress.Remove(_quest.GetId());
+
+        if (saveImmediately && SaveManager.instance != null)
+            SaveManager.instance.SaveGame();
+
+        return true;
+    }
+
     private void GrantRewards(BountyQuest _quest)
     {
         if (_quest.rewards == null)
@@ -229,6 +269,13 @@ public class BountyBoard : MonoBehaviour, ISaveManager
     /// <summary>花金币刷新一批新任务。</summary>
     public bool RefreshWithCurrency()
     {
+        // 还有接了就撂着（没提交）的任务时不给刷新，不然它们会被刷掉、之后就交不了了
+        if (HasUnfinishedAccepted())
+        {
+            Debug.Log("还有没完成的任务，先提交或放弃才能刷新。");
+            return false;
+        }
+
         if (CanRefreshFree())
             return RollNewOffers(true);
 

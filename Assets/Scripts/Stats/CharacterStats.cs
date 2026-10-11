@@ -167,9 +167,14 @@ public class CharacterStats : MonoBehaviour
 
         fx.CreateHitFX(_targetStats.transform, criticalHit);
 
+        // 玩家打出暴击时的专属音效（57）
+        if (criticalHit && this is PlayerStats && AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(57, transform);
+
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
 
-        _targetStats.TakeDamage(totalDamage);
+        // 暴击用红色并带「！」，普通物理保持白色
+        _targetStats.TakeDamage(totalDamage, criticalHit ? DamageType.Critical : DamageType.Physical);
     }
 
 
@@ -180,12 +185,53 @@ public class CharacterStats : MonoBehaviour
         int _iceDamage = iceDamage.GetValue();
         int _lightningDamage = lightningDamage.GetValue();
 
-        int totalMagicDamage = _fireDamage + _iceDamage + _lightningDamage + intelligence.GetValue();
-        totalMagicDamage = CheckTargetResistance(_targetStats, totalMagicDamage);
-
-        _targetStats.TakeDamage(totalMagicDamage);
+        ApplyMagicDamage(_targetStats, _fireDamage, _iceDamage, _lightningDamage, intelligence.GetValue());
 
         CheckCanApplyAilments(_targetStats, _fireDamage, _iceDamage, _lightningDamage);
+    }
+
+    /// <summary>
+    /// 魔法伤害的结算：血量还是按老规矩只扣一次（数值不变），
+    /// 但伤害数字按火 / 冰 / 雷 / 智力拆开弹，这样各自的颜色才对得上。
+    /// _multiplier &lt;= 0 表示不额外乘倍率（分身技能会用到）。
+    /// </summary>
+    protected void ApplyMagicDamage(CharacterStats _targetStats, int _fireDamage, int _iceDamage,
+        int _lightningDamage, int _intelligenceDamage, float _multiplier = 0f)
+    {
+        int rawTotal = _fireDamage + _iceDamage + _lightningDamage + _intelligenceDamage;
+
+        int totalMagicDamage = CheckTargetResistance(_targetStats, rawTotal);
+
+        if (_multiplier > 0f)
+            totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * _multiplier);
+
+        // 扣血这一发不弹数字，数字在下面按属性分开弹
+        _targetStats.TakeDamage(totalMagicDamage, DamageType.None);
+
+        if (rawTotal <= 0)
+            return;
+
+        // 各属性按同一个减伤/倍率系数折算，拆出来的数字加起来≈实际扣的血
+        float factor = (float)totalMagicDamage / rawTotal;
+
+        ShowDamagePopUp(_targetStats, _fireDamage, factor, DamageType.Fire);
+        ShowDamagePopUp(_targetStats, _iceDamage, factor, DamageType.Ice);
+        ShowDamagePopUp(_targetStats, _lightningDamage, factor, DamageType.Lightning);
+        ShowDamagePopUp(_targetStats, _intelligenceDamage, factor, DamageType.Magic);
+    }
+
+    /// <summary>按属性弹一个伤害数字（数值 = 原始值 × 减伤/倍率系数）。</summary>
+    private void ShowDamagePopUp(CharacterStats _targetStats, int _rawDamage, float _factor, DamageType _type)
+    {
+        if (_rawDamage <= 0 || _targetStats == null || _targetStats.fx == null)
+            return;
+
+        int value = Mathf.RoundToInt(_rawDamage * _factor);
+
+        if (value <= 0)
+            return;
+
+        _targetStats.fx.CreatePopUpText(value.ToString(), DamageStyle.ColorOf(_type));
     }
 
     protected void CheckCanApplyAilments(CharacterStats _targetStats, int _fireDamage, int _iceDamage, int _lightningDamage)
@@ -353,19 +399,26 @@ public class CharacterStats : MonoBehaviour
     private void DoIgniteDamage()
     {
         //Debug.Log("burn damage:" + ignitedDamage);
-        DecreaseHP_By(ignitedDamage);
+        // 持续燃烧属于火焰伤害，数字用橙色
+        DecreaseHP_By(ignitedDamage, DamageType.Fire);
     }
 
     #endregion
 
     public virtual void TakeDamage(int _damage)
     {
+        TakeDamage(_damage, DamageType.Physical);
+    }
+
+    /// <summary>_type 只影响伤害数字的颜色/格式，不影响数值。</summary>
+    public virtual void TakeDamage(int _damage, DamageType _type)
+    {
         if (isInvincible)
             return;
 
         if (isVulnerable)
             _damage = Mathf.RoundToInt(_damage * 1.1f);
-        DecreaseHP_By(_damage);
+        DecreaseHP_By(_damage, _type);
 
         GetComponent<Entity>().DamegedEffect();
 
@@ -375,21 +428,39 @@ public class CharacterStats : MonoBehaviour
         }
     }
 
+    /// <summary>回血：弹出实际回上去的量（满血时不会弹）。</summary>
     public virtual void IncreaseHP_By(int _amount)
     {
+        int before = currentHealth;
+
         currentHealth += _amount;
 
         if (currentHealth > GetMaxHealthValue())
             currentHealth = GetMaxHealthValue();
+
+        // 真正加上去的那部分：满血时 healed = 0，就不会弹数字
+        int healed = currentHealth - before;
+
+        if (healed > 0 && !isDead && fx != null)
+            fx.CreatePopUpText(DamageStyle.FormatHeal(healed), DamageStyle.HealColor);
 
         OnHP_Changed?.Invoke();
     }
 
     public virtual void DecreaseHP_By(int _damage)
     {
+        DecreaseHP_By(_damage, DamageType.Physical);
+    }
+
+    public virtual void DecreaseHP_By(int _damage, DamageType _type)
+    {
         //if (isDead) return;
         if (_damage > 0)
-            fx.CreatePopUpText(_damage.ToString());
+        {
+            // None = 只扣血不弹数字（魔法伤害拆成多段数字时，总扣血那一发用这个）
+            if (_type != DamageType.None)
+                fx.CreatePopUpText(DamageStyle.Format(_damage, _type), DamageStyle.ColorOf(_type));
+        }
 
         currentHealth -= _damage;
 

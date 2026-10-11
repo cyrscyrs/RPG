@@ -18,6 +18,12 @@ public class DialogueNpc : MonoBehaviour
     [Tooltip("提示文字挂在头顶的偏移（相对 NPC 自身）")]
     [SerializeField] private Vector3 promptOffset = new Vector3(0f, 1.8f, 0f);
 
+    [Tooltip("这个可交互物自己的提示格式，{0} 会替换成按键名。留空 = 用 DialogueManager 上的默认格式")]
+    [SerializeField] private string promptFormatOverride = "";
+
+    [Tooltip("和这个 NPC 开始对话时播的音效在 AudioManager 里的下标，-1 = 不播（赏金猎人 50 / 商人 54 / 铁匠 55）")]
+    [SerializeField] private int talkSfxIndex = -1;
+
     [Tooltip("按顺序检查：第一个「还没触发过的一次性对话」会被用上")]
     [SerializeField] private NpcDialogue[] dialogues;
 
@@ -27,6 +33,12 @@ public class DialogueNpc : MonoBehaviour
     public string NpcName => string.IsNullOrEmpty(npcName) ? name : npcName;
     public float InteractionRadius => interactionRadius;
     public Vector3 PromptWorldPosition => transform.position + promptOffset;
+
+    /// <summary>开始对话时的招呼声下标（-1 = 不播）。</summary>
+    public int TalkSfxIndex => talkSfxIndex;
+
+    /// <summary>这个可交互物想用的提示格式（标牌用「按 W 互动」）；留空表示用 DialogueManager 的默认格式。</summary>
+    public string PromptFormatOverride => promptFormatOverride;
 
     /// <summary>取现在该播放哪段对话。</summary>
     public NpcDialogue GetAvailableDialogue(DialogueManager _manager)

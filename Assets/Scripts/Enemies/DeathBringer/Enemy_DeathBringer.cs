@@ -71,6 +71,10 @@ public class Enemy_DeathBringer : Enemy
 
         GameObject newSpell = Instantiate(spellPrefab, spellPosition, Quaternion.identity);
         newSpell.GetComponent<DeathBringerSpell_Controller>().SetupSpell(stats);
+
+        // 法术生成（41）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(41, newSpell.transform);
     }
 
     public void FindPosition()

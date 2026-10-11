@@ -83,12 +83,32 @@ public class MonsterBestiaryUI : MonoBehaviour
         independent = uiManager == null || transform.parent != uiManager.transform;
 
         if (!independent)
+        {
             uiManager.SetBestiaryPanel(PanelRoot);
+        }
+        else
+        {
+            // 面板挂在「自己管理显示」的容器下面（比如 Canvas/StartActive），根节点一直激活，
+            // L 键和暂停都归本脚本管，所以要把 UI.cs 里的引用清掉。
+            // 不然两边都会响应 L：UI.cs 开关的是面板根节点、本脚本开关的是 Window 子节点，
+            // 两个状态一错开，就会出现「关掉图鉴后游戏还暂停着、血条技能 UI 也不见了，
+            // 再按一次 L 只恢复一半，之后打开的图鉴只剩暂停没有界面」。
+            if (uiManager != null)
+                uiManager.SetBestiaryPanel(null);
+
+            // 去开别的菜单时把自己收掉（和对话 / 商店面板一样），不然会卡在暂停里
+            UI_SelfManagedPanel.OnOtherMenuOpened += ClosePanel;
+        }
 
         // 根节点保持激活，只把显示层关掉
         SetWindowVisible(false);
         wasOpen = false;
         refreshTimer = 0f;
+    }
+
+    private void OnDestroy()
+    {
+        UI_SelfManagedPanel.OnOtherMenuOpened -= ClosePanel;
     }
 
     private void Update()
@@ -115,12 +135,19 @@ public class MonsterBestiaryUI : MonoBehaviour
         // 不依赖「刚打开」那一瞬的检测，避免根节点被别的逻辑一直开着时只刷新一次。
         if (open)
         {
-            refreshTimer -= Time.unscaledDeltaTime;
+            // 详情 / 掉落物弹窗开着的时候不重建列表，避免玩家正在看的时候背后的格子白闪一下
+            bool popupOpen = (detailPopup != null && detailPopup.activeSelf)
+                          || (dropsPopup != null && dropsPopup.activeSelf);
 
-            if (refreshTimer <= 0f)
+            if (!popupOpen)
             {
-                refreshTimer = Mathf.Max(0.1f, autoRefreshInterval);
-                Refresh();
+                refreshTimer -= Time.unscaledDeltaTime;
+
+                if (refreshTimer <= 0f)
+                {
+                    refreshTimer = Mathf.Max(0.1f, autoRefreshInterval);
+                    Refresh();
+                }
             }
         }
 
@@ -128,7 +155,11 @@ public class MonsterBestiaryUI : MonoBehaviour
             return;
 
         if (Input.GetKeyDown(toggleKey))
-            Toggle();
+        {
+            // 别的面板正暂停着（菜单 / 对话）就不要叠上来；已经开着的时候 L 用来关
+            if (IsOpen || Time.timeScale > 0f)
+                Toggle();
+        }
 
         if (open && Input.GetKeyDown(closeKey))
             ClosePanel();
@@ -156,6 +187,14 @@ public class MonsterBestiaryUI : MonoBehaviour
 
     public void OpenPanel()
     {
+        // 打开时先把上一次留下的详情 / 掉落物弹窗收掉
+        CloseDetailPopup();
+        CloseDropsPopup();
+
+        // 普通 UI 打开声（7）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(7, null);
+
         if (independent)
         {
             SetWindowVisible(true);
@@ -232,8 +271,6 @@ public class MonsterBestiaryUI : MonoBehaviour
 
     private void Refresh()
     {
-        ClosePopups();
-
         if (content == null || slotPrefab == null)
         {
             Debug.LogWarning("MonsterBestiaryUI：界面引用不全（Content / Slot Prefab 为空）" +

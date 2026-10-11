@@ -12,6 +12,8 @@ public class ArcherIdleState : ArcherGroundedState
     {
         base.Enter();
 
+        enemy.SetZeroVelocity();   // 待机就是站在原地，不然会带着上一状态的速度继续滑
+
         stateTimer = enemy.idleTime;
     }
 

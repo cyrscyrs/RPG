@@ -41,30 +41,30 @@ MonoBehaviour:
   - equipmentType: 1
     materials:
     - material: {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
-      baseAmount: 0
-      amountPerLevel: 2
+      baseAmount: 1
+      amountPerLevel: 0
     - material: {fileID: 11400000, guid: 37db200629bf8014eb03e3801a51b19f, type: 2}
-      baseAmount: 3
+      baseAmount: 1
       amountPerLevel: 0
     currencyBase: 100
     currencyPerLevel: 50
   - equipmentType: 2
     materials:
     - material: {fileID: 11400000, guid: 8eaabfdedee29844eacc18e7ef89b8ed, type: 2}
-      baseAmount: 0
-      amountPerLevel: 1
+      baseAmount: 1
+      amountPerLevel: 0
     - material: {fileID: 11400000, guid: 8ed51963f9b5a794a854351460cf60ab, type: 2}
-      baseAmount: 2
+      baseAmount: 1
       amountPerLevel: 0
     currencyBase: 150
     currencyPerLevel: 60
   - equipmentType: 3
     materials:
     - material: {fileID: 11400000, guid: 6f0586f3c7a31594d802829cedef0e42, type: 2}
-      baseAmount: 0
-      amountPerLevel: 1
+      baseAmount: 1
+      amountPerLevel: 0
     - material: {fileID: 11400000, guid: 12b8a45c9cd50684089d303e12737313, type: 2}
-      baseAmount: 2
+      baseAmount: 1
       amountPerLevel: 0
     currencyBase: 80
     currencyPerLevel: 40

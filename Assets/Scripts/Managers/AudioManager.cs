@@ -17,10 +17,13 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
+        // 出现重复实例时把旧的那个整个销毁，然后立刻把 static 指向自己。
+        // 不写那句 instance = this 的话，静态字段会继续指着一个已经销毁的对象，
+        // 之后所有 AudioManager.instance.XXX 都会在死对象上执行。
+        if (instance != null && instance != this)
             Destroy(instance.gameObject);
-        else
-            instance = this;
+
+        instance = this;
 
         Invoke("AllowSFX", .1f);
     }
@@ -39,22 +42,36 @@ public class AudioManager : MonoBehaviour
     public void PlaySFX(int _sfxIndex, Transform _source)
     {
         if (!canPlaySFX) return;
+
+        // 数组没接、索引越界、或者这一格是空的，都直接跳过，别让一个缺音源把整局打断
+        if (sfx == null || _sfxIndex < 0 || _sfxIndex >= sfx.Length) return;
+        if (sfx[_sfxIndex] == null) return;
+
         if (_source != null && Vector2.Distance(PlayerManager.instance.player.transform.position, _source.position) > sfxMinimumDistance)
             return;
 
-        if(_sfxIndex < sfx.Length)
-        {
-            /*
-            if (sfx[_sfxIndex].isPlaying)
-                return;
-            */
+        /*
+        if (sfx[_sfxIndex].isPlaying)
+            return;
+        */
 
-            sfx[_sfxIndex].pitch = Random.Range(.85f, 1.1f);
-            sfx[_sfxIndex].Play();
-        }
+        sfx[_sfxIndex].pitch = Random.Range(.85f, 1.1f);
+        sfx[_sfxIndex].Play();
     }
 
     public void StopSFX(int _index) => sfx[_index].Stop();
+
+    /// <summary>
+    /// 拿到某个下标的音效片段。给需要自己控制播放/停止的地方用
+    /// （比如点燃音效要跟着负面效果一起停，不能占用 AudioManager 上公用的那条 AudioSource）。
+    /// </summary>
+    public AudioClip GetSFXClip(int _sfxIndex)
+    {
+        if (sfx == null || _sfxIndex < 0 || _sfxIndex >= sfx.Length || sfx[_sfxIndex] == null)
+            return null;
+
+        return sfx[_sfxIndex].clip;
+    }
 
 
     public void StopSFXCoroutine(int _index) => StopCoroutine(DecreaseVolume(sfx[_index]));

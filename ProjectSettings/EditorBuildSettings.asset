@@ -14,5 +14,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BossScene.unity
     guid: b24f023e3515d744b892b8f52857ada6
+  - enabled: 1
+    path: Assets/Scenes/SafeRoom.unity
+    guid: 8a26251ed3e50fc49913a281006f1e89
+  - enabled: 1
+    path: Assets/Scenes/stage0.unity
+    guid: 1c8c5ced49f843a4b9865023a00e679d
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: a5d1d9da0c996bc43ab3f6524d9f37da, type: 2}

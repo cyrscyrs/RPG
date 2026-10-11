@@ -21,6 +21,7 @@ public class EnemyState
     public virtual void Enter()
     {
         triggerCalled = false;
+        stateTimer = 0f;   // 不重置的话，新状态会继承上一个状态留下的旧计时器（可能是负数），刚进去就被弹出
         enemyBase.anim.SetBool(animBoolName, true);
 
         rb = enemyBase.rb;

@@ -13,7 +13,7 @@ public class Player : Entity
     /// <summary>演出等场合被锁住操作时为 true。</summary>
     public bool controlLocked { get; private set; }
 
-    [Header("Move info")]
+    [Header("移动跳跃")]
     public float moveSpeed;
     public float jumpForce;
     public int jumpTimes;
@@ -22,7 +22,7 @@ public class Player : Entity
     private float defaultMoveSpeed;
     private float defaultJumpForce;
 
-    [Header("Dash info")]
+    [Header("冲刺")]
     public float dashSpeed;
     public float dashDuration;
     private float defaultDashSpeed;
@@ -232,6 +232,13 @@ public class Player : Entity
     }
 
     public void AnimationTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+
+    /// <summary>从空中回到地面时的落地音效（51）。</summary>
+    public void PlayLandingSFX()
+    {
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(51, transform);
+    }
 
     private void CheckForDashInput()
     {

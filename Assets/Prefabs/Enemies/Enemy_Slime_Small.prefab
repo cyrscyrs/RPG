@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3786504444790666314}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 469185492047865197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.032999754, y: 0.14400001, z: 0}
+  m_LocalPosition: {x: -0.032999754, y: 0.466, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -686,6 +686,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &4686874029458217277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3224425221714248628}
+  m_Layer: 0
+  m_Name: WallCheckDown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3224425221714248628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4686874029458217277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.032999754, y: -0.113, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3036931796198971232}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5329517493558593296
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,6 +755,7 @@ Transform:
   - {fileID: 9168636145044873305}
   - {fileID: 4890230941317979228}
   - {fileID: 3786504444790666314}
+  - {fileID: 3224425221714248628}
   - {fileID: 8488327627699797718}
   - {fileID: 8686006125901495748}
   - {fileID: 1707422210007848209}
@@ -791,8 +823,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.020080574, y: 0.04811776}
-  m_Size: {x: 1.4654533, y: 0.9086782}
+  m_Offset: {x: 0.020080589, y: 0.03481396}
+  m_Size: {x: 1.4654535, y: 0.8820706}
   m_Direction: 1
 --- !u!114 &7834650749712752174
 MonoBehaviour:
@@ -857,7 +889,7 @@ MonoBehaviour:
   soulsDropAmont:
     baseValue: 25
     modifiers: 
-  monsterId: 
+  monsterId: slimesmall
   level: 1
   percentageModifier: 0.1
 --- !u!114 &1839393414963025942
@@ -887,6 +919,7 @@ MonoBehaviour:
   ShockFX: {fileID: 7667985876127919403}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  hideHealthBar: 0
 --- !u!114 &233723641361491214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -918,7 +951,8 @@ MonoBehaviour:
   attackCheckRadius: 0.54
   groundCheck: {fileID: 4890230941317979228}
   groundCheckDistance: 0.4
-  wallCheck: {fileID: 3786504444790666314}
+  wallCheckUp: {fileID: 3786504444790666314}
+  wallCheckDown: {fileID: 3224425221714248628}
   wallCheckDistance: 1
   whatIsGround:
     serializedVersion: 2

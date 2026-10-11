@@ -83,7 +83,9 @@ public class UI : MonoBehaviour, ISaveManager
 
         if (_menu != null)
         {
-            AudioManager.instance.PlaySFX(7, null);
+            // UI 的 Awake 可能跑在 AudioManager 的 Awake 之前，那时 instance 还是 null
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(7, null);
             _menu.SetActive(true);
 
             // 切到别的菜单时，让对话 / 强化这种自管理面板把自己收起来
@@ -136,6 +138,10 @@ public class UI : MonoBehaviour, ISaveManager
 
     public void SwitchOnEndScreen()
     {
+        // 死亡屏幕出现时的音效（11）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(11, null);
+
         fadeScreen.FadeOut();
         StartCoroutine(EndScreenCorutione());
     }

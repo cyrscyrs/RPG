@@ -11,7 +11,8 @@ public class Entity : MonoBehaviour
     public float attackCheckRadius = 1.2f;
     [SerializeField] protected Transform groundCheck;
     [SerializeField] protected float groundCheckDistance = 1;
-    [SerializeField] protected Transform wallCheck;
+    [SerializeField] protected Transform wallCheckUp;
+    [SerializeField] protected Transform wallCheckDown;
     [SerializeField] protected float wallCheckDistance = .8f;
     [SerializeField] protected LayerMask whatIsGround;
 
@@ -119,15 +120,18 @@ public class Entity : MonoBehaviour
 
     public virtual bool isGroundDetected() => Physics2D.Raycast(groundCheck.position,
         Vector2.down, groundCheckDistance, whatIsGround);
-    public virtual bool isWallDectected() => Physics2D.Raycast(wallCheck.position,
-        Vector2.right * facingDir, wallCheckDistance, whatIsGround);
+    public virtual bool isWallDectected() => Physics2D.Raycast(wallCheckUp.position,
+        Vector2.right * facingDir, wallCheckDistance, whatIsGround) ||
+        Physics2D.Raycast(wallCheckDown.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
 
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x,
             groundCheck.position.y - groundCheckDistance));
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance * facingDir,
-            wallCheck.position.y));
+        Gizmos.DrawLine(wallCheckUp.position, new Vector3(wallCheckUp.position.x + wallCheckDistance * facingDir,
+            wallCheckUp.position.y));
+        Gizmos.DrawLine(wallCheckDown.position, new Vector3(wallCheckDown.position.x + wallCheckDistance * facingDir,
+            wallCheckDown.position.y));
         Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
     }
 

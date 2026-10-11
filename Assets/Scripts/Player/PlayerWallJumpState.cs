@@ -12,7 +12,7 @@ public class PlayerWallJumpState : PlayerState
     {
         base.Enter();
 
-        stateTimer = 0.5f;
+        stateTimer = 0.3f;
         player.SetVelocity(player.moveSpeed * -player.facingDir, player.jumpForce);
     }
 
@@ -31,7 +31,12 @@ public class PlayerWallJumpState : PlayerState
             stateMachine.ChangState(player.wallSlide);
 
         if (player.isGroundDetected())
+        {
+            player.PlayLandingSFX();
             stateMachine.ChangState(player.idleState);
+        }
+        if (stateTimer <= 0 && xInput != 0)
+            player.SetVelocity(player.moveSpeed * xInput, rb.velocity.y);
 
         if(player.jumpTimes < player.jumpLimit && Input.GetKeyDown(KeyCode.Space))
         {

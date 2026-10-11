@@ -14,8 +14,14 @@ public class DeadZone : MonoBehaviour
         {
             PlayerStats playerStats = collision.GetComponent<PlayerStats>();
             playerStats.TakeDamage(Mathf.RoundToInt(playerStats.GetMaxHealthValue() * .1f));
-            //PlayerManager.instance.player.transform.position.x = PlayerManager.instance.lastGroundPosX;
-            PlayerManager.instance.player.transform.position = PlayerManager.instance.lastGrounedPos;
+            // 回到最新存档点；还没存过档就退回「最后站立的位置」
+            Vector3 respawn = PlayerManager.instance.lastGrounedPos;
+
+            if (GameManager.instance != null &&
+                GameManager.instance.TryGetLatestCheckpointPosition(out Vector3 checkpointPosition))
+                respawn = checkpointPosition;
+
+            PlayerManager.instance.player.transform.position = respawn;
             PlayerManager.instance.player.SetZeroVelocity();
         }
         else

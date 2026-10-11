@@ -23,12 +23,15 @@ public class PlayerAirState : PlayerState
         base.Update();
 
         if (player.isGroundDetected())
+        {
+            player.PlayLandingSFX();
             stateMachine.ChangState(player.idleState);
+        }
 
         if (player.isWallDectected())
             stateMachine.ChangState(player.wallSlide);
 
-        if (xInput != 0)
+        //if (xInput != 0)
             player.SetVelocity(player.moveSpeed * 0.8f * xInput, rb.velocity.y);
         
 

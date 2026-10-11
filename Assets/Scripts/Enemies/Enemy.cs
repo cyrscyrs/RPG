@@ -12,6 +12,16 @@ public class Enemy : Entity
 {
     [SerializeField] protected LayerMask whatIsPlayer;
 
+    [Header("Detect info")]
+    [Tooltip("检测玩家用的圆投射半径。原来是零厚度的射线，玩家比检测线高/矮几厘米就打不到，怪物就会在战斗和待机之间来回横跳、永远打不到人")]
+    [SerializeField] protected float playerDetectRadius = 0.35f;
+
+    [Tooltip("检测距离")]
+    [SerializeField] protected float playerDetectDistance = 10f;
+
+    [Tooltip("上面那条打空时的兜底：玩家站在正面、且高度差不超过这个值，就算看到了")]
+    [SerializeField] protected float playerDetectHeightTolerance = 1.2f;
+
     [Header("Stun info")]
     public float stunDuration = 1;
     public Vector2 stunDirection = new Vector2(10, 12);
@@ -142,8 +152,44 @@ public class Enemy : Entity
 
     }
 
-    public virtual RaycastHit2D IsPlayerDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir,
-        10, whatIsPlayer);
+    /// <summary>
+    /// 有没有看到玩家。
+    /// 先从前方的 wallCheckUp 打一条有粗细的圆投射；打空的话再看玩家是不是就站在正面、高度也差不多。
+    /// 加这层兜底是因为射线原来是一条零厚度的横线：玩家比它高/矮几厘米就会整个擦过去，
+    /// 战斗状态又会立刻因为「没看到」退回待机，怪物就永远走不到攻击分支。
+    /// </summary>
+    public virtual RaycastHit2D IsPlayerDetected()
+    {
+        Vector2 origin = wallCheckUp.position;
+        Vector2 direction = Vector2.right * facingDir;
+
+        RaycastHit2D hit = Physics2D.CircleCast(origin, Mathf.Max(0.01f, playerDetectRadius), direction,
+            playerDetectDistance, whatIsPlayer);
+
+        if (hit.collider != null)
+            return hit;
+
+        Player player = PlayerManager.instance != null ? PlayerManager.instance.player : null;
+
+        if (player == null || player.stats.isDead)
+            return hit;
+
+        Vector2 delta = (Vector2)player.transform.position - (Vector2)transform.position;
+
+        // 必须在正面、水平距离够近、高度差不大（否则会隔着地板去打楼上的人）
+        bool inFront = delta.x * facingDir >= -0.2f && Mathf.Abs(delta.x) <= agroDistance;
+        bool sameLevel = Mathf.Abs(delta.y) <= playerDetectHeightTolerance;
+
+        if (!inFront || !sameLevel)
+            return hit;
+
+        // 兜底：从检测点直接朝玩家身上再打一条（同样带粗细），打到就算看到。
+        // 只有「在正面 + 够近 + 高度差不多」才会走到这里，所以不会隔着地板去打楼上的人。
+        Vector2 toPlayer = (Vector2)player.transform.position - origin;
+
+        return Physics2D.CircleCast(origin, Mathf.Max(0.01f, playerDetectRadius), toPlayer.normalized,
+            toPlayer.magnitude, whatIsPlayer);
+    }
 
     protected override void OnDrawGizmos()
     {

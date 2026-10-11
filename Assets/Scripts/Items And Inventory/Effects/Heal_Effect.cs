@@ -21,5 +21,9 @@ public class Heal_Effect : ItemEffect
         int healAmount = Mathf.RoundToInt(playerStats.GetMaxHealthValue() * healPercent * Mathf.Max(0f, _multiplier));
 
         playerStats.IncreaseHP_By(healAmount);
+
+        // 回血音效（53）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(53, null);
     }
 }

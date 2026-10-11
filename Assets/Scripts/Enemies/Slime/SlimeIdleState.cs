@@ -14,6 +14,8 @@ public class SlimeIdleState : EnemyState
     {
         base.Enter();
 
+        enemy.SetZeroVelocity();   // 待机就是站在原地，不然会带着上一状态的速度继续滑
+
         stateTimer = enemy.idleTime;
     }
 
@@ -21,7 +23,9 @@ public class SlimeIdleState : EnemyState
     {
         base.Exit();
 
-        //AudioManager.instance.PlaySFX(24, enemy.transform);
+        // 史莱姆待机声（38）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(38, enemy.transform);
     }
 
     public override void Update()

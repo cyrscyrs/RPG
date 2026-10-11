@@ -12,6 +12,10 @@ public class PlayerWallSlideState : PlayerState
     {
         base.Enter();
 
+        // 扒在墙上（47）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(47, player.transform);
+
         player.jumpTimes = 0;
     }
 
@@ -42,6 +46,9 @@ public class PlayerWallSlideState : PlayerState
         if(!player.isWallDectected())
             stateMachine.ChangState(player.idleState);
         if(player.isGroundDetected())
+        {
+            player.PlayLandingSFX();
             stateMachine.ChangState(player.idleState);
+        }
     }
 }

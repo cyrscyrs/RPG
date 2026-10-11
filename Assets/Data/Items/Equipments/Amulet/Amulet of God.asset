@@ -15,12 +15,12 @@ MonoBehaviour:
   itemType: 1
   itemName: "\u795E\u4E4B\u62A4\u7B26"
   icon: {fileID: -245851270, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
-  dropChance: 0
+  itemId: dc5f689bcb10727449f199f3d6ff9eea
+  dropChance: 100
   equipmentType: 2
   itemCooldown: 0
   itemEffects:
   - {fileID: 11400000, guid: 22c7a2c1691008245b8e34c3a907bde7, type: 2}
-  itemEffectDescription: "\u653B\u51FB\u547D\u4E2D\u65F6\u9644\u52A0\u96F7\u51FB"
   strength: 0
   agility: 0
   intelligence: 0
@@ -36,3 +36,5 @@ MonoBehaviour:
   iceDamage: 0
   lightningDamage: 20
   craftingMaterials: []
+  growthFlatPerLevel: 2
+  growthPercentPerLevel: 0.1

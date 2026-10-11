@@ -59,6 +59,10 @@ public class Enemy_Shady : Enemy
 
     public override void AnimationSpecialAttackTrigger()
     {
+        // 自爆（13）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(13, transform);
+
         GameObject newExplsion = Instantiate(explosionPrefab,transform.position, Quaternion.identity);
 
         newExplsion.GetComponent<Explosion_Controller>().SetupExplosion(stats, growSpeed, maxSize, attackCheckRadius);

@@ -13,6 +13,10 @@ public class SlimeDeadState : EnemyState
     {
         base.Enter();
 
+        // 史莱姆死亡声（37）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(37, enemy.transform);
+
         enemy.anim.SetBool(enemy.lastAnimBoolName, true);
         enemy.anim.speed = 0;
         enemy.cd.enabled = false;

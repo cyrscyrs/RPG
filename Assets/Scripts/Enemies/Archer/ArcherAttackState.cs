@@ -14,6 +14,10 @@ public class ArcherAttackState : EnemyState
     {
         base.Enter();
         enemy.SetZeroVelocity();
+
+        // 弓箭手攻击（44）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(44, enemy.transform);
     }
 
     public override void Exit()

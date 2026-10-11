@@ -282,6 +282,91 @@ public class EquipmentLevelManager : MonoBehaviour, ISaveManager
         => HasMilestone(_flask, Config.secondMilestone) ? Config.flaskCooldownMultiplier : 1f;
 
     /// <summary>衣服 20 级的免死：冷却好了就返回 true 并开始冷却。</summary>
+    /// <summary>这件装备还有哪几个里程碑等级（默认 10 / 20）。</summary>
+    public IEnumerable<int> GetMilestones(ItemData_Equipment _item)
+    {
+        if (_item == null)
+            yield break;
+
+        EquipmentGrowthConfig cfg = Config;
+
+        if (cfg.firstMilestone > 0)
+            yield return cfg.firstMilestone;
+
+        if (cfg.secondMilestone > 0 && cfg.secondMilestone != cfg.firstMilestone)
+            yield return cfg.secondMilestone;
+    }
+
+    /// <summary>里程碑效果的短名（列表里用的），比如「剑气」「斩杀」。没有对应效果就返回空串。</summary>
+    public string GetMilestoneSummary(ItemData_Equipment _item, int _milestone)
+    {
+        if (_item == null)
+            return string.Empty;
+
+        EquipmentGrowthConfig cfg = Config;
+        bool first = _milestone == cfg.firstMilestone;
+        bool second = _milestone == cfg.secondMilestone;
+
+        if (!first && !second)
+            return string.Empty;
+
+        switch (_item.equipmentType)
+        {
+            case EquipmentType.Weapon:
+                return first ? "剑气" : "斩杀";
+
+            case EquipmentType.Armor:
+                return first ? "反弹伤害" : "免死";
+
+            case EquipmentType.Amulet:
+                return first
+                    ? $"力量/体质/敏捷/智力 各 +{cfg.amuletFlatBonus}"
+                    : $"全属性 +{Mathf.RoundToInt(cfg.amuletPercentBonus * 100f)}%";
+
+            case EquipmentType.Flask:
+                return first
+                    ? $"恢复量 +{Mathf.RoundToInt(cfg.flaskHealBonus * 100f)}%"
+                    : $"使用冷却 ×{cfg.flaskCooldownMultiplier:0.##}";
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>里程碑效果的完整描述（数值都取自配置），给强化预览用。</summary>
+    public string GetMilestoneDescription(ItemData_Equipment _item, int _milestone)
+    {
+        if (string.IsNullOrEmpty(GetMilestoneSummary(_item, _milestone)))
+            return string.Empty;
+
+        EquipmentGrowthConfig cfg = Config;
+        bool first = _milestone == cfg.firstMilestone;
+
+        switch (_item.equipmentType)
+        {
+            case EquipmentType.Weapon:
+                return first
+                    ? $"剑气：每次攻击向前放出一道剑气，伤害为攻击力的 {Mathf.RoundToInt(cfg.swordAuraDamagePercent * 100f)}%"
+                    : $"斩杀：攻击后敌人生命低于 {Mathf.RoundToInt(cfg.executeHealthPercent * 100f)}% 时直接斩杀";
+
+            case EquipmentType.Armor:
+                return first
+                    ? $"反弹伤害：把受到的 {Mathf.RoundToInt(cfg.armorReflectPercent * 100f)}% 伤害反弹给攻击者"
+                    : $"免死：致命伤害免疫一次并留 1 点血，冷却 {Mathf.RoundToInt(cfg.lethalImmunityCooldown)} 秒";
+
+            case EquipmentType.Amulet:
+                return first
+                    ? $"力量 / 体质 / 敏捷 / 智力 各 +{cfg.amuletFlatBonus}"
+                    : $"全属性 +{Mathf.RoundToInt(cfg.amuletPercentBonus * 100f)}%";
+
+            case EquipmentType.Flask:
+                return first
+                    ? $"恢复量 +{Mathf.RoundToInt(cfg.flaskHealBonus * 100f)}%"
+                    : $"使用冷却 ×{cfg.flaskCooldownMultiplier:0.##}（减半）";
+        }
+
+        return string.Empty;
+    }
+
     public bool TryUseLethalImmunity()
     {
         if (Time.time < nextLethalImmunityTime)

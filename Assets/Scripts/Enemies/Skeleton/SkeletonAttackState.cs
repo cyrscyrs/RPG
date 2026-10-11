@@ -14,6 +14,10 @@ public class SkeletonAttackState : EnemyState
     {
         base.Enter();
         enemy.SetZeroVelocity();
+
+        // 髅髅攻击（36）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(36, enemy.transform);
     }
 
     public override void Exit()

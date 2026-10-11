@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6741998361791579961}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 6741998361791579960}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.066, y: -0.295, z: 0.13552302}
+  m_LocalPosition: {x: 0.066, y: 0.393, z: 0.13552302}
   m_LocalScale: {x: 0.7142857, y: 0.7142857, z: 0.7142857}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -211,6 +211,7 @@ Transform:
   - {fileID: 6741998363061309922}
   - {fileID: 6741998363134930626}
   - {fileID: 6741998361791579961}
+  - {fileID: 4691789428226832825}
   - {fileID: 6741998361510737821}
   - {fileID: 6741998363242221166}
   - {fileID: 6741998362727722358}
@@ -235,7 +236,8 @@ MonoBehaviour:
   attackCheckRadius: 1
   groundCheck: {fileID: 6741998363134930626}
   groundCheckDistance: 1
-  wallCheck: {fileID: 6741998361791579961}
+  wallCheckUp: {fileID: 6741998361791579961}
+  wallCheckDown: {fileID: 4691789428226832825}
   wallCheckDistance: 0.8
   whatIsGround:
     serializedVersion: 2
@@ -312,6 +314,7 @@ MonoBehaviour:
   ShockFX: {fileID: 6741998362297281171}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  hideHealthBar: 0
 --- !u!114 &6741998361985430871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +413,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.019053733, y: -0.25423816}
-  m_Size: {x: 0.81756866, y: 1.5084771}
+  m_Offset: {x: 0.035369396, y: -0.3097099}
+  m_Size: {x: 0.7849373, y: 1.3975364}
   m_Direction: 0
 --- !u!114 &6741998361985430869
 MonoBehaviour:
@@ -948,6 +951,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &9158790392303246215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4691789428226832825}
+  m_Layer: 0
+  m_Name: WallCheckDown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4691789428226832825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9158790392303246215}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.066, y: -0.569, z: 0.13552302}
+  m_LocalScale: {x: 0.7142857, y: 0.7142857, z: 0.7142857}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6741998361985430870}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5220287005135901628
 PrefabInstance:
   m_ObjectHideFlags: 0

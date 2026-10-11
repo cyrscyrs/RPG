@@ -17,6 +17,10 @@ public class PlayerDashState : PlayerState
 
         player.stats.MakeInvincible(true);
 
+        // 冲刺音效（60）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(60, player.transform);
+
         stateTimer = player.dashDuration;
     }
 

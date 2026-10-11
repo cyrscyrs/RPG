@@ -14,9 +14,14 @@ public class PlayerStats : CharacterStats
 
     public override void TakeDamage(int _damage)
     {
+        TakeDamage(_damage, DamageType.Physical);
+    }
+
+    public override void TakeDamage(int _damage, DamageType _type)
+    {
         if (isInvincible)
         {
-            base.TakeDamage(_damage);   // 冲刺无敌帧：不消耗免死
+            base.TakeDamage(_damage, _type);   // 冲刺无敌帧：不消耗免死
             return;
         }
 
@@ -24,11 +29,18 @@ public class PlayerStats : CharacterStats
         if (_damage >= currentHealth && TryUseLethalImmunity())
             return;
 
+        // 受伤喊声（32）+ 受击音效（52）：挨打时的两声反馈
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(32, null);
+            AudioManager.instance.PlaySFX(52, null);
+        }
+
         // 先取出攻击者，用来做衣服 10 级的反弹
         CharacterStats attacker = lastAttacker;
         lastAttacker = null;
 
-        base.TakeDamage(_damage);
+        base.TakeDamage(_damage, _type);
         player.DamegedEffect();
 
         TryReflectDamage(attacker, _damage);
@@ -52,6 +64,11 @@ public class PlayerStats : CharacterStats
         if (_targetStats.currentHealth > 0 && _targetStats.currentHealth <= _targetStats.GetMaxHealthValue() * threshold)
         {
             Debug.Log($"武器 20 级效果：斩杀「{_targetStats.name}」（生命值低于 {threshold * 100f:0.#}%）");
+
+            // 斩杀时在敌人头上弹一个红色的「处决！」
+            if (_targetStats.fx != null)
+                _targetStats.fx.CreatePopUpText("处决！", Color.red);
+
             _targetStats.KillEntity();
         }
     }
@@ -104,6 +121,11 @@ public class PlayerStats : CharacterStats
     protected override void Die()
     {
         base.Die();
+
+        // 死亡音效（35）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(35, null);
+
         player.Die();
 
         GameManager.instance.lostCurrencyAmount = PlayerManager.instance.currency;
@@ -114,13 +136,17 @@ public class PlayerStats : CharacterStats
 
     public override void DecreaseHP_By(int _damage)
     {
-        base.DecreaseHP_By(_damage);
+        DecreaseHP_By(_damage, DamageType.Physical);
+    }
+
+    public override void DecreaseHP_By(int _damage, DamageType _type)
+    {
+        base.DecreaseHP_By(_damage, _type);
         if(_damage > GetMaxHealthValue() * .3f)
         {
             player.SetupKncokbackPower(new Vector2(10, 6));
             player.fx.ScreenShake(player.fx.shake_getHighDamage);
 
-            AudioManager.instance.PlaySFX(35, null);
         }
 
         ItemData_Equipment currentArmor = Inventory.instance.GetEquipment(EquipmentType.Armor);
@@ -148,16 +174,19 @@ public class PlayerStats : CharacterStats
 
         int totalDamage = damage.GetValue() + strength.GetValue();
 
+        bool criticalHit = false;
+
         if (_multiplier > 0)
             totalDamage = Mathf.RoundToInt(totalDamage * _multiplier);
 
         if (CanCrit())
         {
             totalDamage = CalculateCriticalDamage(totalDamage);
+            criticalHit = true;
         }
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
-        _targetStats.TakeDamage(totalDamage);
+        _targetStats.TakeDamage(totalDamage, criticalHit ? DamageType.Critical : DamageType.Physical);
     }
 
     private void CloneDoMagicDamage(CharacterStats _targetStats, float _attackMultiplier)
@@ -166,13 +195,8 @@ public class PlayerStats : CharacterStats
         int _iceDamage = iceDamage.GetValue();
         int _lightningDamage = lightningDamage.GetValue();
 
-        int totalMagicDamage = _fireDamage + _iceDamage + _lightningDamage + intelligence.GetValue();
-        totalMagicDamage = CheckTargetResistance(_targetStats, totalMagicDamage);
-
-        if (_attackMultiplier > 0)
-            totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * _attackMultiplier);
-
-        _targetStats.TakeDamage(totalMagicDamage);
+        // 分身的魔法伤害同样按属性拆开弹数字
+        ApplyMagicDamage(_targetStats, _fireDamage, _iceDamage, _lightningDamage, intelligence.GetValue(), _attackMultiplier);
 
         CheckCanApplyAilments(_targetStats, _fireDamage, _iceDamage, _lightningDamage);
     }

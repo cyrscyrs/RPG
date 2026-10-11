@@ -15,10 +15,12 @@ public class PlayerManager : MonoBehaviour,ISaveManager
 
     private void Awake()
     {
-        if(instance != null)
+        // 出现重复实例时把旧的那个销毁，然后立刻把 static 指向自己。
+        // 少了后面那句赋值，静态字段会继续指着一个已经销毁的对象。
+        if (instance != null && instance != this)
             Destroy(instance.gameObject);
-        else
-            instance = this;
+
+        instance = this;
     }
 
 

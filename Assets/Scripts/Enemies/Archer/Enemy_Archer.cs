@@ -69,13 +69,17 @@ public class Enemy_Archer : Enemy
 
     public override void AnimationSpecialAttackTrigger()
     {
+        // 生成箭（43）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(43, transform);
+
         GameObject newArrow = Instantiate(arrowPrefab, attackCheck.position, Quaternion.identity);
 
         newArrow.GetComponent<Arrow_Controller>()?.SetupArrow(arrowSpeed * facingDir, stats);
     }
 
     public bool GroundBehindCheck() => Physics2D.BoxCast(groundBehindCheck.position, groundBehindCheckSize, 0, Vector2.zero, 0, whatIsGround);
-    public bool WallBehindCheck() => Physics2D.Raycast(wallCheck.position, Vector2.right * -facingDir, wallCheckDistance + 2, whatIsGround);
+    public bool WallBehindCheck() => Physics2D.Raycast(wallCheckUp.position, Vector2.right * -facingDir, wallCheckDistance + 2, whatIsGround);
 
     protected override void OnDrawGizmos()
     {

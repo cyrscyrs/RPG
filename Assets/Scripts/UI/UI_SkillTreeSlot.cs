@@ -66,6 +66,10 @@ public class UI_SkillTreeSlot : MonoBehaviour,IPointerEnterHandler, IPointerExit
         if (unlocked == true || PlayerManager.instance.HaveEnoughCurrency(skillCost) == false) return;
         unlocked = true;
         skillImage.color = Color.white;
+
+        // 技能树解锁成功（59）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(59, null);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

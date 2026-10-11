@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3341219827601942841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 530406319217256728}
+  m_Layer: 0
+  m_Name: WallCheckDown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &530406319217256728
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3341219827601942841}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.432, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5620245659555298414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5620245658081080491
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5620245659305635562}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -410,7 +441,7 @@ Transform:
   m_GameObject: {fileID: 5620245659305635557}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.643, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -495,6 +526,7 @@ Transform:
   - {fileID: 5620245658743381263}
   - {fileID: 5620245658384045292}
   - {fileID: 5620245659305635562}
+  - {fileID: 530406319217256728}
   - {fileID: 5620245658606860019}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -653,6 +685,7 @@ MonoBehaviour:
   ShockFX: {fileID: 8419034872820975752}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  hideHealthBar: 0
 --- !u!114 &5620245659555298405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,7 +724,8 @@ MonoBehaviour:
   attackCheckRadius: 2.5
   groundCheck: {fileID: 5620245658384045292}
   groundCheckDistance: 1
-  wallCheck: {fileID: 5620245659305635562}
+  wallCheckUp: {fileID: 5620245659305635562}
+  wallCheckDown: {fileID: 530406319217256728}
   wallCheckDistance: 0.8
   whatIsGround:
     serializedVersion: 2

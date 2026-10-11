@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerCounterAttackState : PlayerState
 {
     private bool canCreateClone;
+    // 同一次弹反里可能同时框到多个碰撞体，声音只放一次
+    private bool parrySoundPlayed;
     public PlayerCounterAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -14,6 +16,7 @@ public class PlayerCounterAttackState : PlayerState
         base.Enter();
 
         canCreateClone = true;
+        parrySoundPlayed = false;
         stateTimer = player.counterAttackDuration;
         player.anim.SetBool("SuccessfulCounterAttack", false);
     }
@@ -64,5 +67,14 @@ public class PlayerCounterAttackState : PlayerState
     {
         stateTimer = 10;
         player.anim.SetBool("SuccessfulCounterAttack", true);
+
+        // 成功弹反音效（61）：一次弹反只响一下
+        if (!parrySoundPlayed)
+        {
+            parrySoundPlayed = true;
+
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(61, player.transform);
+        }
     }
 }

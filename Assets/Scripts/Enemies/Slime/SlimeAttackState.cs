@@ -14,6 +14,10 @@ public class SlimeAttackState : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        // 史莱姆攻击声（38）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(38, enemy.transform);
         enemy.SetZeroVelocity();
     }
 

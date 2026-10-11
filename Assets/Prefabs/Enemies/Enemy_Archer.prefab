@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4155317060019576767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6552701520990836725}
+  m_Layer: 0
+  m_Name: WallCheckDown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6552701520990836725
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4155317060019576767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.428, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5340561614171379467}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5340561613852321586
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,6 +109,7 @@ Transform:
   - {fileID: 5340561615541986101}
   - {fileID: 5340561615594636927}
   - {fileID: 5340561614948750857}
+  - {fileID: 6552701520990836725}
   - {fileID: 5340561614271290243}
   - {fileID: 5340561614641431795}
   - {fileID: 5340561615216787721}
@@ -238,6 +270,7 @@ MonoBehaviour:
   ShockFX: {fileID: 8301269102359007807}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  hideHealthBar: 0
 --- !u!114 &5340561614171379461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,7 +309,8 @@ MonoBehaviour:
   attackCheckRadius: 1.2
   groundCheck: {fileID: 5340561615594636927}
   groundCheckDistance: 1
-  wallCheck: {fileID: 5340561614948750857}
+  wallCheckUp: {fileID: 5340561614948750857}
+  wallCheckDown: {fileID: 6552701520990836725}
   wallCheckDistance: 1.28
   whatIsGround:
     serializedVersion: 2
@@ -508,7 +542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5340561614948750857}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -523,7 +557,7 @@ Transform:
   m_GameObject: {fileID: 5340561614948750862}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -15,6 +15,10 @@ public class DeathBringerAttackState : EnemyState
     {
         base.Enter();
 
+        // Boss 攻击 / 开场表演亮那一手都用这条（1）
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(1, enemy.transform);
+
         enemy.chanceToTeleport += 5;
     }
 

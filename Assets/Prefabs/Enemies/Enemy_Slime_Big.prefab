@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1178501065881595178
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 758703005245937874}
+  m_Layer: 0
+  m_Name: WallCheckDown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &758703005245937874
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178501065881595178}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.032999754, y: -0.095, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7589362187317388933}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7589362185570649277
 GameObject:
   m_ObjectHideFlags: 0
@@ -41,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7589362185616618110}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +87,7 @@ Transform:
   m_GameObject: {fileID: 7589362185616618109}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.032999754, y: 0.14400001, z: 0}
+  m_LocalPosition: {x: -0.032999754, y: 0.468, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -724,6 +755,7 @@ Transform:
   - {fileID: 7589362186824310467}
   - {fileID: 7589362185570649278}
   - {fileID: 7589362185616618110}
+  - {fileID: 758703005245937874}
   - {fileID: 7589362185852382392}
   - {fileID: 7589362186214125070}
   - {fileID: 7589362186577210427}
@@ -791,8 +823,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.020080574, y: 0.04811776}
-  m_Size: {x: 1.4654533, y: 0.9086782}
+  m_Offset: {x: 0.020080589, y: 0.03642321}
+  m_Size: {x: 1.4654535, y: 0.88528997}
   m_Direction: 1
 --- !u!114 &7589362187317388938
 MonoBehaviour:
@@ -887,6 +919,7 @@ MonoBehaviour:
   ShockFX: {fileID: 5799405453853604101}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  hideHealthBar: 0
 --- !u!114 &7589362187317388936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,8 +958,9 @@ MonoBehaviour:
   attackCheckRadius: 0.54
   groundCheck: {fileID: 7589362185570649278}
   groundCheckDistance: 0.4
-  wallCheck: {fileID: 7589362185616618110}
-  wallCheckDistance: 1
+  wallCheckUp: {fileID: 7589362185616618110}
+  wallCheckDown: {fileID: 758703005245937874}
+  wallCheckDistance: 1.5
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8

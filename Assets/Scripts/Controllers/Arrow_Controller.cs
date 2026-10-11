@@ -25,12 +25,22 @@ public class Arrow_Controller : MonoBehaviour
     {
         if(collision.gameObject.layer == LayerMask.NameToLayer(targetLayerName))
         {
+            // 箭命中玩家（42）
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(42, transform);
+
             //collision.GetComponent<CharacterStats>()?.TakeDamage(damage);
             myStats.DoDamage(collision.GetComponent<CharacterStats>());
             StuckInto(collision);
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            // 箭命中地面/墙壁（42）
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(42, transform);
+
             StuckInto(collision);
+        }
     }
 
     public void SetupArrow(float _speed, CharacterStats _myStats)

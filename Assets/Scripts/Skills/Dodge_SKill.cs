@@ -32,6 +32,10 @@ public class Dodge_SKill : Skill
     {
         if (unlockDodgeButton.unlocked && !dodgeUnlocked)
         {
+            // 保险：玩家（或它的 stats）还没准备好就别急，下一次检查再来
+            if (player == null || player.stats == null)
+                return;
+
             player.stats.evasion.AddModifier(evasionAmount);
             Inventory.instance.UpdateStatUI();
             dodgeUnlocked = true;

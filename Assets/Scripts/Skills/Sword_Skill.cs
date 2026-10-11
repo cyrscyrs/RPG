@@ -122,6 +122,10 @@ public class Sword_Skill : Skill
         //player.AssignNewSword(newSword);
         AssignNewSword(newSword);
         DotsActive(false);
+
+        // 剑技释放音效：旋转（Spin）/ 弹射（Bounce）= 27，穿刺（Pierce）/ 默认 = 28
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX((swordType == SwordType.Spin || swordType == SwordType.Bounce) ? 27 : 28, player.transform);
     }
 
     public void SetupSwordType(Sword_Skill_Controller _swordSkillController)

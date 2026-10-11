@@ -160,7 +160,11 @@ public class DialogueManager : MonoBehaviour, ISaveManager
         }
 
         currentNpc = npc;
-        ui.ShowPrompt(npc.PromptWorldPosition, string.Format(promptFormat, interactKeyLabel));
+
+        // 标牌这类可交互物可以自带提示格式（比如「按 W 互动」），留空就用默认的「按 W 对话」
+        string format = string.IsNullOrEmpty(npc.PromptFormatOverride) ? promptFormat : npc.PromptFormatOverride;
+
+        ui.ShowPrompt(npc.PromptWorldPosition, string.Format(format, interactKeyLabel));
 
         if (Input.GetKeyDown(interactKey))
             StartDialogue(npc, available);
@@ -226,6 +230,10 @@ public class DialogueManager : MonoBehaviour, ISaveManager
 
         ui.HidePrompt();
         ShowNode(_dialogue.GetFirstNode());
+
+        // NPC 招呼声（赏金猎人 50 / 商人 54 / 铁匠 55）
+        if (_npc != null && _npc.TalkSfxIndex >= 0 && AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(_npc.TalkSfxIndex, _npc.transform);
     }
 
     #endregion

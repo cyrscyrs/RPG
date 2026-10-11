@@ -41,6 +41,8 @@ public class DialogueUI : MonoBehaviour
     public bool IsDialogueVisible => boxRoot != null && boxRoot.activeInHierarchy;
 
     private float visibleCharacters;
+    // 上一次播打字机声音时的可见字数，用来每几个字响一下
+    private int lastTypeSoundChar;
     private Vector3 promptWorldPosition;
     private UnityAction<DialogueChoice> choiceCallback;
 
@@ -68,6 +70,15 @@ public class DialogueUI : MonoBehaviour
         int shown = Mathf.Clamp(Mathf.FloorToInt(visibleCharacters), 0, total);
 
         bodyText.maxVisibleCharacters = shown;
+
+        // 打字机音效（56）：每显示 3 个字响一下，不要每个字都响
+        if (shown != lastTypeSoundChar)
+        {
+            lastTypeSoundChar = shown;
+
+            if (shown % 3 == 0 && AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(56, null);
+        }
 
         if (shown >= total)
             FinishTyping();
@@ -165,6 +176,7 @@ public class DialogueUI : MonoBehaviour
         bodyText.maxVisibleCharacters = 0;
 
         visibleCharacters = 0f;
+        lastTypeSoundChar = 0;
         SetContinueHint(false);
 
         IsTyping = bodyText.textInfo.characterCount > 0;

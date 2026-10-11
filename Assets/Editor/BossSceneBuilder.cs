@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.Linq;
 using System.IO;
 using TMPro;
 using UnityEditor;
@@ -226,6 +227,86 @@ public static class BossSceneBuilder
                   "试玩：让 BossScene 单独打开（关掉 MainScene）再按 Play，或者在 Build Settings 里把 Play Mode Start Scene 设成它。");
     }
 
+    /// <summary>
+    /// 场景里的 Boss 血条 / 演出名字被删掉、或者 BossFight 上的引用丢了时的修复。
+    /// 只补这两个界面并接好引用，不重建整个场景：场地、升降墙、Boss 的位置都不会动。
+    /// 菜单：Tools/Boss战/修复血条与演出名字引用
+    /// </summary>
+    [MenuItem("Tools/Boss战/修复血条与演出名字引用")]
+    private static void RepairHealthBarAndTitle()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        BossFightController controller = Object.FindObjectOfType<BossFightController>();
+
+        if (controller == null)
+        {
+            EditorUtility.DisplayDialog("Boss 战", "当前场景里没有 BossFightController（一般挂在 /BossFight 上）。", "好");
+            return;
+        }
+
+        GameObject inGameUI = Find(scene, "Canvas/InGame_UI");
+
+        if (inGameUI == null)
+        {
+            EditorUtility.DisplayDialog("Boss 战", "场景里没找到 Canvas/InGame_UI，Boss 血条没地方挂。", "好");
+            return;
+        }
+
+        SerializedObject serialized = new SerializedObject(controller);
+
+        // Boss / 玩家引用如果也丢了，顺手一起补（只找当前场景里的，不要拿到工程里的预制体）
+        Enemy_DeathBringer boss = serialized.FindProperty("boss").objectReferenceValue as Enemy_DeathBringer;
+
+        if (boss == null)
+            boss = Object.FindObjectsOfType<Enemy_DeathBringer>().FirstOrDefault(b => b.gameObject.scene == scene);
+
+        EnemyStats bossStats = boss != null ? boss.GetComponent<EnemyStats>() : null;
+
+        if (bossStats == null)
+        {
+            EditorUtility.DisplayDialog("Boss 战", "场景里没找到 Boss（Enemy_DeathBringer），血条没法绑定血量。", "好");
+            return;
+        }
+
+        serialized.FindProperty("boss").objectReferenceValue = boss;
+
+        if (serialized.FindProperty("player").objectReferenceValue == null)
+            serialized.FindProperty("player").objectReferenceValue =
+                Object.FindObjectsOfType<Player>().FirstOrDefault(p => p.gameObject.scene == scene);
+
+        TMP_FontAsset font = FindChineseFont();
+
+        // ---------- Boss 血条（屏幕下方那根） ----------
+        Transform oldBar = inGameUI.transform.Find("BossHealthBar");
+
+        if (oldBar != null)
+            Object.DestroyImmediate(oldBar.gameObject);
+
+        BossHealthBarUI healthBar = BuildHealthBar(inGameUI.transform, font, bossStats);
+        healthBar.gameObject.SetActive(true);
+
+        // ---------- 演出时屏幕中央浮现的名字 ----------
+        Transform oldTitle = inGameUI.transform.Find("BossTitle");
+
+        if (oldTitle != null)
+            Object.DestroyImmediate(oldTitle.gameObject);
+
+        CanvasGroup titleGroup;
+        BuildTitle(inGameUI.transform, font, out titleGroup);
+
+        // ---------- 接线 ----------
+        serialized.FindProperty("healthBar").objectReferenceValue = healthBar;
+        serialized.FindProperty("titleGroup").objectReferenceValue = titleGroup;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorUtility.SetDirty(controller);
+        EditorSceneManager.MarkSceneDirty(scene);
+        Selection.activeGameObject = controller.gameObject;
+
+        Debug.Log("Boss 战：已在 Canvas/InGame_UI 下重建 BossHealthBar（Boss 血条）和 BossTitle（演出名字），" +
+                  "并接到 /BossFight 的 BossFightController 上。场地、升降墙和 Boss 位置都没动。记得 Ctrl+S 保存场景。");
+    }
+
     #region 场景搭建
 
     private static void BuildTitle(Transform _parent, TMP_FontAsset _font, out CanvasGroup _group)
@@ -283,7 +364,8 @@ public static class BossSceneBuilder
         Stretch(RT(background.gameObject));
 
         // 掉血时慢慢追上来的残影
-        Image delayFill = NewImage("DelayFill", bar.transform, new Color(1f, 0.85f, 0.5f, 0.75f));
+        // 和玩家/怪物头顶血条的掉血残影用同一个黄色
+        Image delayFill = NewImage("DelayFill", bar.transform, new Color(1f, 0.83f, 0.2f, 0.9f));
         delayFill.sprite = white;
         Stretch(RT(delayFill.gameObject), 2f, 2f, 2f, 2f);
         delayFill.type = Image.Type.Filled;

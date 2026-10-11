@@ -6,6 +6,9 @@ public class PLayerAnimationTriggers : MonoBehaviour
 {
     private Player player => GetComponentInParent<Player>();
 
+    // 攻击喊声：两下挥砍轮着用 15 / 17 两条喊声
+    private int shoutToggle;
+
     private void AnimationTrigger()
     {
         player.AnimationTrigger();
@@ -13,6 +16,8 @@ public class PLayerAnimationTriggers : MonoBehaviour
 
     private void AttackTrigger()
     {
+        PlayAttackShout();
+
         AudioManager.instance.PlaySFX(2,null);
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
@@ -42,6 +47,16 @@ public class PLayerAnimationTriggers : MonoBehaviour
         }
 
         TrySpawnSwordAura();
+    }
+
+    /// <summary>普通攻击的喊声：轮换 15 / 17，避免每次都同一声。</summary>
+    private void PlayAttackShout()
+    {
+        if (AudioManager.instance == null)
+            return;
+
+        shoutToggle = 1 - shoutToggle;
+        AudioManager.instance.PlaySFX(shoutToggle == 0 ? 15 : 17, null);
     }
 
     /// <summary>武器 10 级：每次攻击放出一道剑气（伤害是攻击力的一定比例）。</summary>
