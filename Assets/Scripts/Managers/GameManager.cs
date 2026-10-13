@@ -190,6 +190,12 @@ public class GameManager : MonoBehaviour,ISaveManager
 
     public void SaveData(ref GameData _data)
     {
+        // 场景刚起来时可能有人在自己的 Start 里就存档（比如 BountyBoard.Start），
+        // 那时本脚本的 Start 还没跑到，player 是 null。直接不写，
+        // 免得 NRE 把「上次的存档位置 / 所在场景」这些字段阵掉。
+        if (player == null)
+            return;
+
         _data.lostCurrencyAmount = lostCurrencyAmount;
         _data.lostPositionX = player.position.x;
         _data.lostPositionY = player.position.y;

@@ -75,7 +75,8 @@ public class Enemy_Archer : Enemy
 
         GameObject newArrow = Instantiate(arrowPrefab, attackCheck.position, Quaternion.identity);
 
-        newArrow.GetComponent<Arrow_Controller>()?.SetupArrow(arrowSpeed * facingDir, stats);
+        // 把朝向一并传进去，箭矢才会跟着弓箭手朝左/朝右翻转
+        newArrow.GetComponent<Arrow_Controller>()?.SetupArrow(arrowSpeed, stats, facingDir);
     }
 
     public bool GroundBehindCheck() => Physics2D.BoxCast(groundBehindCheck.position, groundBehindCheckSize, 0, Vector2.zero, 0, whatIsGround);

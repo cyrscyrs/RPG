@@ -49,6 +49,11 @@ public class GameData
     // 老存档没有这个字段，读出来是 null，调用方退回默认场景。
     public string lastSceneName;
 
+    // 存档槽位界面要显示的时间（本地时间字符串，纯展示用）。
+    // 开新档时写 createdAt，之后每次存档刷新 lastSavedAt；老存档里是 null。
+    public string createdAt;
+    public string lastSavedAt;
+
     public Vector3 lastGroundedPos;
 
     public SerializableDictionary<string, float> volumeSettings;
@@ -59,6 +64,8 @@ public class GameData
         this.lostPositionX = 0;
         this.lostPositionY = 0;
         lastSceneName = string.Empty;
+        createdAt = string.Empty;
+        lastSavedAt = string.Empty;
         lastGroundedPos = new Vector3(0, 0);
 
         this.currency = 0;

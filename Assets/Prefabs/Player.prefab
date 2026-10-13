@@ -5453,7 +5453,7 @@ MonoBehaviour:
     baseValue: 10
     modifiers: 
   damage:
-    baseValue: 321
+    baseValue: 100
     modifiers: 
   critChance:
     baseValue: 0
@@ -5502,8 +5502,8 @@ MonoBehaviour:
   ItemDropLimit: 0
   possibleDrop: []
   dropPrefab: {fileID: 2752415022731389095, guid: 73fc0641ed7a9b34794ec5af50669b1a, type: 3}
-  chanceToLooseEquipment: 20
-  chanceToLooseMaterial: 75
+  chanceToLooseEquipment: 0
+  chanceToLooseMaterial: 0
 --- !u!222 &7729081613946261845
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5578,6 +5578,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUpTextPrefabs: {fileID: 142384122865283388, guid: a99f2d17ddb276a48aca376c7eea3742, type: 3}
+  popUpRandomX: 1.8
+  popUpRandomY: {x: 1.6, y: 6}
   flashDuration: 0.2
   hitMat: {fileID: 2100000, guid: 96844efcc7d5d4d468d94a1091df2400, type: 2}
   chilledColor: {r: 0, g: 1, b: 0.972549, a: 1}
@@ -5592,6 +5594,7 @@ MonoBehaviour:
   ShockFX: {fileID: 8616963694595591005}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  igniteSfxIndex: 4
   hideHealthBar: 0
   shakeMultipler: 0.2
   shake_catchSword: {x: 1, y: 0, z: 0}
@@ -5790,6 +5793,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2261aa693c60d14497cab58ef369dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageFillColor: {r: 1, g: 0.83, b: 0.2, a: 1}
+  damageHoldTime: 0.18
+  damageDrainSpeed: 0.35
 --- !u!1 &7535881953902945218
 GameObject:
   m_ObjectHideFlags: 0

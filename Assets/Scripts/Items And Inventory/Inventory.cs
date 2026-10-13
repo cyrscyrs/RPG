@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using System.Linq;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour, ISaveManager
@@ -409,16 +410,25 @@ public class Inventory : MonoBehaviour, ISaveManager
 
         foreach (KeyValuePair<string, int> pair in _data.inventory)
         {
+            bool resolved = false;
+
             foreach (var item in itemDataBase)
             {
                 if (item != null && item.itemId == pair.Key)
                 {
+                    resolved = true;
+
                     InventoryItem itemToLoad = new InventoryItem(item);
                     itemToLoad.stackSize = pair.Value;
 
                     loadedItems.Add(itemToLoad);
                 }
             }
+
+            // 对不上 = 这件东西会丢：多半是 itemDataBase 没补全（漏了新加的物品/材料）
+            if (!resolved)
+                Debug.LogWarning($"读档：物品 id「{pair.Key}」（x{pair.Value}）在 Inventory.itemDataBase 里找不到，" +
+                                 "这一件读不回来。在编辑器里选中挂 Inventory 的物体就会自动补全那张表。");
         }
 
         foreach (string loadedItemId in _data.equipmentIds)
@@ -436,6 +446,11 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public void SaveData(ref GameData _data)
     {
+        // ⚠ 必须在这两句 Clear 之前判断：场景刚起来时（别的脚本在自己的 Start 里就存档）
+        // 这里几个字典还是 null，先 Clear 再抛异常会把存档里已有的背包清空。
+        if (inventoryDictionary == null || stashDictionary == null || equipmentDictionary == null)
+            return;
+
         _data.inventory.Clear();
         _data.equipmentIds.Clear();
 
@@ -463,16 +478,41 @@ public class Inventory : MonoBehaviour, ISaveManager
     private List<ItemData> GetItemDataBase()
     {
         List<ItemData> itemDataBase = new List<ItemData>();
-        string[] assetNames = AssetDatabase.FindAssets("", new[] { "Assets/Data/Items" });
-
-        foreach (string SOName in assetNames)
+        // 先按路径排序再填：顺序固定，上面 OnValidate 的比对才稳定
+        foreach (string path in AssetDatabase.FindAssets("", new[] { "Assets/Data/Items" })
+                     .Select(AssetDatabase.GUIDToAssetPath)
+                     .OrderBy(_path => _path, System.StringComparer.Ordinal))
         {
-            var SOpath = AssetDatabase.GUIDToAssetPath(SOName);
-            var itemData = AssetDatabase.LoadAssetAtPath<ItemData>(SOpath);
-            itemDataBase.Add(itemData);
+            // 只收 ItemData：Assets/Data/Items 里可能还藏着别的类型（贴图等），加载回来会是 null
+            ItemData item = AssetDatabase.LoadAssetAtPath<ItemData>(path);
+
+            if (item != null)
+                itemDataBase.Add(item);
         }
 
         return itemDataBase;
+    }
+
+    /// <summary>
+    /// 编辑器里自动补全 itemDataBase。
+    ///
+    /// 这张表是「存档里的物品 id → 资产」的对照表，**漏一项那次存档里的东西读档时就会被静默丢掉**。
+    /// 它以前只能右键菜单手动刷，很容易忘（改了物品资源、加了材料以后就会漏）。
+    /// 现在打开预制体 / 场景、或者改动这个组件时会自动对齐。
+    /// </summary>
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+            return;   // 播放时不改数据，免得把场景标脏
+
+        List<ItemData> all = GetItemDataBase();
+
+        // 内容一致（不管顺序）就别动：不然每次打开场景都会因为顺序不同而把场景标脏
+        if (itemDataBase != null && itemDataBase.Count == all.Count &&
+            !itemDataBase.Except(all).Any() && !all.Except(itemDataBase).Any())
+            return;
+
+        itemDataBase = all;
     }
 #endif
 

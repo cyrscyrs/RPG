@@ -28,6 +28,10 @@ public class EquipmentLevelManager : MonoBehaviour, ISaveManager
     {
         get
         {
+            // 热更下来的优先（远端能改成长曲线），其次用 Inspector 上配的，最后用代码默认值
+            if (Tuning.EquipmentGrowthHotfix != null)
+                return Tuning.EquipmentGrowthHotfix;
+
             if (config != null)
                 return config;
 

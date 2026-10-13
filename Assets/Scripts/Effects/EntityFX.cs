@@ -127,7 +127,7 @@ public class EntityFX : MonoBehaviour
         IgniteFX.Play();
         PlayIgniteSfx();
 
-        InvokeRepeating("IgnitedColorFX", 0, .3f);
+        InvokeRepeating("IgnitedColorFX", 0, Tuning.Config.ailmentBlinkInterval);
         Invoke("CancelColorChange", _seconds);
     }
     public void ChilledFxFor(float _seconds)
@@ -141,7 +141,7 @@ public class EntityFX : MonoBehaviour
     {
         ShockFX.Play();
 
-        InvokeRepeating("ShockedColorFX", 0, .3f);
+        InvokeRepeating("ShockedColorFX", 0, Tuning.Config.ailmentBlinkInterval);
         Invoke("CancelColorChange", _seconds);
     }
 

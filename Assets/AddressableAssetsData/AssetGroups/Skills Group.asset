@@ -21,9 +21,10 @@ MonoBehaviour:
     m_Address: Assets/Prefabs/Skills/Crystal.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: ba7c01ce9a6143a48be14e373ccfb94c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 1eb19f1fc534b3a4a9d7114bc8ad0711, type: 2}
     - {fileID: 11400000, guid: 253fbad68d6618341ae05a16269686b0, type: 2}
+    - {fileID: 11400000, guid: 1eb19f1fc534b3a4a9d7114bc8ad0711, type: 2}

@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Hotfix Content
+  m_EditorClassIdentifier: 
+  m_GroupName: Hotfix Content
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 5ce9c304fd00ce14a92747daa1d5921b
+  m_SerializeEntries:
+  - m_GUID: 0abac2278eda01749a282205efe6ec6f
+    m_Address: Assets/Prefabs/NPC/NPC_Shop.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d60e70f5d55fa2428057799b3d79fbd
+    m_Address: Assets/Prefabs/Skills/Clone.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0def5cb2d0d7ac844abfb35b41d070b0
+    m_Address: Assets/Prefabs/Player.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20ca616e37c7af642b7de05243fd683f
+    m_Address: Assets/Prefabs/Enemies/Boss/Enemy_DeathBringer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f4da64cdc1c1654babc8d4781987241
+    m_Address: Assets/Prefabs/NPC/NPC_Blacksmith.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d4caedb06f722a49a7118631e4b7092
+    m_Address: Assets/Prefabs/NPC/NPC_BountyHunter.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 50b127d834f7b4d4aa283b05c9286928
+    m_Address: Assets/Prefabs/Enemies/Enemy_Slime_Medium.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a2e2dbd11e9e104eb2b354d7ed053e9
+    m_Address: EquipmentGrowth
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cbfbfc37b2bef243824e285c3a1aadf
+    m_Address: Assets/Prefabs/Enemies/Enemy_Archer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84083437ef1f1a340931eb7e6ae41fad
+    m_Address: Assets/Prefabs/Enemies/Enemy_Skeleton.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c3e5f0ef53f514428d3dba9c9410d4d
+    m_Address: Assets/Prefabs/Enemies/Enemy_Slime_Big.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b68cf05e7aee13b44a1de00fc1f1f207
+    m_Address: GameTuning
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebccce0a9b0cd704bae81947e231901b
+    m_Address: Assets/Prefabs/Enemies/Enemy_Shady.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffece08066614054c8b6c4ab4cdab112
+    m_Address: Assets/Prefabs/Enemies/Enemy_Slime_Small.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hotfix
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: ba7c01ce9a6143a48be14e373ccfb94c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6e087bd142ead5842a1fe95af51bd403, type: 2}
+    - {fileID: 11400000, guid: f4d923266d0a9eb47bd47952f7632190, type: 2}

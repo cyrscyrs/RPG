@@ -21,10 +21,38 @@ public class EnemyStats : CharacterStats
 
     [Range(0f, 1f)]
     [SerializeField] private float percentageModifier = .1f;
+
+    /// <summary>等级加成算过没有（算过之后再改 level 不会补算属性）。</summary>
+    private bool levelApplied;
+
+    /// <summary>
+    /// 关掉这只怪的掉落（Boss 召唤出来的怪用：杀了不掉东西）。
+    /// 只在这一次运行里有效，不动预制体上的配置。
+    /// </summary>
+    [System.NonSerialized] public bool suppressDrops;
+
+    /// <summary>
+    /// 运行时改等级（Boss 召唤的怪用它设成 5 级）。
+    ///
+    /// ⚠ 等级加成是在 Start 里一次性乘进属性里的，所以要在 Instantiate 之后、Start 之前调用
+    /// （Instantiate 会立刻跑 Awake，Start 要等到这一帧的 Update 之后，紧接着设是安全的）。
+    /// </summary>
+    public void SetLevel(int _level)
+    {
+        level = Mathf.Max(1, _level);
+
+        if (levelApplied)
+            Debug.LogWarning($"{name}：等级是在 Start 之后才改的，属性加成不会再补算（召唤物要在 Instantiate 后立刻 SetLevel）。");
+    }
+
+    /// <summary>每级属性成长比例：这个敌人自己配了就用它，没配（<= 0）就用调参表里的全局值。</summary>
+    private float LevelStatPercent
+        => percentageModifier > 0f ? percentageModifier : Tuning.Config.enemyLevelStatPercent;
     protected override void Start()
     {
         //soulsDropAmont.SetDefaultValue(1000);
         ApplyLevelModifier();
+        levelApplied = true;
 
         base.Start();
 
@@ -59,7 +87,7 @@ public class EnemyStats : CharacterStats
     {
         for (int i = 1; i < level; i++)
         {
-            float modifier = _stat.GetValue() * percentageModifier;
+            float modifier = _stat.GetValue() * LevelStatPercent;
 
             _stat.AddModifier(Mathf.RoundToInt(modifier));
         }
@@ -93,6 +121,9 @@ public class EnemyStats : CharacterStats
         KillStreakBuffManager.NotifyKill(MonsterId);   // 连续杀敌加速：连击进度
         enemy.Die();
         PlayerManager.instance.currency += soulsDropAmont.GetValue();
-        myDrop.GenerateDrop();
+
+        // Boss 召唤出来的怪不掉东西（击杀奖励 / 图鉴计数照旧，只把掉落物去掉）
+        if (!suppressDrops)
+            myDrop.GenerateDrop();
     }
 }

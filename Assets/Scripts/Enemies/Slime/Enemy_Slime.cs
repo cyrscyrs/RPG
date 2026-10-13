@@ -67,9 +67,18 @@ public class Enemy_Slime : Enemy
 
     private void CreateSlimes(int _amountOfSlime, GameObject _slimePrefabs)
     {
+        // 分裂出来的小史莱姆要继承「不掉落」：Boss 召唤的中史莱姆被砍掉后会分裂，
+        // 小史莱姆不跟着继承的话，照样会掉东西
+        EnemyStats myStats = stats as EnemyStats;
+
         for (int i = 0; i < _amountOfSlime; i++)
         {
             GameObject newSlime = Instantiate(_slimePrefabs, transform.position, Quaternion.identity);
+
+            EnemyStats childStats = newSlime.GetComponent<EnemyStats>();
+
+            if (childStats != null && myStats != null)
+                childStats.suppressDrops = myStats.suppressDrops;
 
             newSlime.GetComponent<Enemy_Slime>().SetupSlime(facingDir);
         }

@@ -43,10 +43,13 @@ public class Arrow_Controller : MonoBehaviour
         }
     }
 
-    public void SetupArrow(float _speed, CharacterStats _myStats)
+    public void SetupArrow(float _speed, CharacterStats _myStats, int _facingDir = 1)
     {
-        xVelocity = _speed;
+        // 朝左生成的箭矢飞行速度取负，同时把整个箭矢（贴图 + 拖尾）也转到左边
+        xVelocity = Mathf.Abs(_speed) * (_facingDir < 0 ? -1f : 1f);
         myStats= _myStats;
+
+        transform.rotation = Quaternion.Euler(0, _facingDir < 0 ? 180f : 0f, 0);
     }
 
     private void StuckInto(Collider2D collision)

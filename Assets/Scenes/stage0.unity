@@ -7784,7 +7784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5305930581375479605, guid: eeb71c3e081f25f4187070ec47994a86, type: 3}
       propertyPath: destinationLabel
-      value: "\u8FD4\u56DE"
+      value: "\u4F11\u606F\u4E00\u4E0B"
       objectReference: {fileID: 0}
     - target: {fileID: 5305930581375479605, guid: eeb71c3e081f25f4187070ec47994a86, type: 3}
       propertyPath: interactionRadius
@@ -11273,7 +11273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fx: {fileID: 0}
   strength:
-    baseValue: 10
+    baseValue: 50
     modifiers: 
   agility:
     baseValue: 0
@@ -11282,10 +11282,10 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   vitality:
-    baseValue: 10
+    baseValue: 50
     modifiers: 
   damage:
-    baseValue: 333
+    baseValue: 150
     modifiers: 
   critChance:
     baseValue: 0
@@ -11294,16 +11294,16 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   maxHealth:
-    baseValue: 2500
+    baseValue: 2250
     modifiers: 
   armor:
-    baseValue: 20
+    baseValue: 40
     modifiers: 
   evasion:
     baseValue: 0
     modifiers: 
   magicResistance:
-    baseValue: 20
+    baseValue: 0
     modifiers: 
   fireDamage:
     baseValue: 0
@@ -11320,9 +11320,9 @@ MonoBehaviour:
   shockStrikePrefab: {fileID: 6469953322724948848, guid: b98d3c36a6d9256419ec7193b888a61a, type: 3}
   currentHealth: 0
   soulsDropAmont:
-    baseValue: 0
+    baseValue: 100
     modifiers: 
-  monsterId: 
+  monsterId: skeleton
   level: 5
   percentageModifier: 0.1
 --- !u!114 &1019728760
@@ -59599,7 +59599,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5305930581375479605, guid: eeb71c3e081f25f4187070ec47994a86, type: 3}
       propertyPath: destinationLabel
-      value: "\u5B89\u5168\u5C4B"
+      value: "\u8FD4\u56DE"
       objectReference: {fileID: 0}
     - target: {fileID: 5305930581375479605, guid: eeb71c3e081f25f4187070ec47994a86, type: 3}
       propertyPath: interactionRadius
@@ -89431,10 +89431,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3512896267488921027, guid: 0def5cb2d0d7ac844abfb35b41d070b0, type: 3}
-      propertyPath: m_DefaultVelocity.x
-      value: -0.2
-      objectReference: {fileID: 0}
     - target: {fileID: 5752492808987257266, guid: 0def5cb2d0d7ac844abfb35b41d070b0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -91839,7 +91835,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fx: {fileID: 0}
   strength:
-    baseValue: 10
+    baseValue: 75
     modifiers: 
   agility:
     baseValue: 20
@@ -91848,25 +91844,25 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   vitality:
-    baseValue: 0
+    baseValue: 20
     modifiers: 
   damage:
-    baseValue: 400
+    baseValue: 300
     modifiers: 
   critChance:
-    baseValue: 20
+    baseValue: 0
     modifiers: 
   critPower:
     baseValue: 0
     modifiers: 
   maxHealth:
-    baseValue: 500
+    baseValue: 1500
     modifiers: 
   armor:
-    baseValue: 0
+    baseValue: 10
     modifiers: 
   evasion:
-    baseValue: 10
+    baseValue: 5
     modifiers: 
   magicResistance:
     baseValue: 0
@@ -91886,7 +91882,7 @@ MonoBehaviour:
   shockStrikePrefab: {fileID: 6469953322724948848, guid: b98d3c36a6d9256419ec7193b888a61a, type: 3}
   currentHealth: 0
   soulsDropAmont:
-    baseValue: 100
+    baseValue: 10000
     modifiers: 
   monsterId: archer
   level: 5

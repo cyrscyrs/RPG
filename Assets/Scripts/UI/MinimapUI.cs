@@ -6,6 +6,9 @@ using UnityEngine.UI;
 /// 小地图 / 地图：
 /// - 右上角常驻一张小地图，内容是把 layer 为 Ground 的物体（墙体、地面）用一台正交相机渲染成贴图；
 ///   Ground 层上再叠存档点、可传送的门、以及玩家自己的小方块；
+///   贴图本身是整张地图，小地图只显示「以角色为中心的一小块」——靠 RawImage 的 uvRect 窗口取景，
+///   窗口跟着角色跑，走到地图边缘时会贴边（不会看到地图外面）；
+/// - 大小由 cornerViewWorldHeight（纵向显示多少世界单位）定，调小了就更「近」；
 /// - 按 Tab 显示 / 隐藏右上角的小地图；
 /// - 按 M 暂停游戏并打开大地图，再按 M 或 Esc 关闭并恢复。
 ///
@@ -21,6 +24,10 @@ public class MinimapUI : MonoBehaviour
     [SerializeField] private float cornerWidth = 380f;
     [Tooltip("小地图边框留白（和 Map 的 inset 对应）")]
     [SerializeField] private float cornerPadding = 5f;
+
+    [Tooltip("小地图只显示以角色为中心的一小块：这里填纵向要显示多少世界单位（0 = 显示整张地图）。" +
+             "用世界单位而不是地图比例，是因为四个场景地图大小差很多、共用同一个 Canvas 预制体")]
+    [SerializeField] private float cornerViewWorldHeight = 16f;
 
     [Header("M 键大地图")]
     [SerializeField] private GameObject fullRoot;
@@ -175,6 +182,14 @@ public class MinimapUI : MonoBehaviour
         {
             cornerMap.texture = mapTexture;
             SetSize(cornerMap.rectTransform, cornerWidth, cornerWidth / aspect);
+
+            // 小地图只显示角色周围一小块 —— 窗口之外的图标（存档点 / 门）要裁掉，
+            // 不然它们会飘到小地图框外面去（大地图的 Map 上也有一模一样的这个组件）
+            if (cornerMap.GetComponent<RectMask2D>() == null)
+                cornerMap.gameObject.AddComponent<RectMask2D>();
+
+            // 先按地图中心算一次；等 UpdateMarkers 拿到玩家再跟着玩家跑
+            cornerMap.uvRect = CornerUv(new Vector2(0.5f, 0.5f));
 
             // 边框（Corner）跟着地图的长宽比一起变，不然地图会缩在框里或者溢出
             if (cornerRoot != null)
@@ -352,7 +367,13 @@ public class MinimapUI : MonoBehaviour
         if (cornerPlayerIcon != null) cornerPlayerIcon.normalized = playerPosition;
         if (fullPlayerIcon != null) fullPlayerIcon.normalized = playerPosition;
 
-        ApplyIcons(cornerIcons, cornerMap != null ? cornerMap.rectTransform : null, new Rect(0f, 0f, 1f, 1f), visible);
+        // 右上角小地图只看角色周围一小块，窗口跟着角色跑
+        Rect cornerUv = CornerUv(playerPosition);
+
+        if (cornerMap != null)
+            cornerMap.uvRect = cornerUv;
+
+        ApplyIcons(cornerIcons, cornerMap != null ? cornerMap.rectTransform : null, cornerUv, visible);
         ApplyIcons(fullIcons, fullMap != null ? fullMap.rectTransform : null, CurrentFullUv(), visible);
     }
 
@@ -382,6 +403,27 @@ public class MinimapUI : MonoBehaviour
     }
 
     /// <summary>大地图现在看的是贴图的哪一块。窗口是正方形，和贴图长宽比一致，所以不会拉伸。</summary>
+    /// <summary>
+    /// 右上角小地图现在看的是贴图的哪一块：以角色为中心的一小块。
+    /// 和大地图一样用正方形窗口 —— 小地图框本身就是按地图长宽比做的，正方形窗口放进去正好不拉伸。
+    /// 走到地图边缘时窗口贴边（角色图标就不再居中），这样不会看到地图外面去。
+    /// </summary>
+    private Rect CornerUv(Vector2 _playerNormalized)
+    {
+        float size = 1f;
+
+        if (cornerViewWorldHeight > 0f && mapBounds.size.y > 0.01f)
+            size = Mathf.Clamp01(cornerViewWorldHeight / mapBounds.size.y);
+
+        if (size >= 1f)
+            return new Rect(0f, 0f, 1f, 1f);
+
+        float x = Mathf.Clamp(_playerNormalized.x - size * 0.5f, 0f, 1f - size);
+        float y = Mathf.Clamp(_playerNormalized.y - size * 0.5f, 0f, 1f - size);
+
+        return new Rect(x, y, size, size);
+    }
+
     private Rect CurrentFullUv()
     {
         float size = 1f / Mathf.Max(1f, fullZoom);

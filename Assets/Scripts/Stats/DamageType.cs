@@ -39,6 +39,12 @@ public static class DamageStyle
     /// <summary>回血：绿色。</summary>
     public static readonly Color HealColor = new Color(0.35f, 1f, 0.35f, 1f);
 
+    /// <summary>闪避：淡灰蓝色的「Miss」。</summary>
+    public static readonly Color MissColor = new Color(0.72f, 0.78f, 0.88f, 1f);
+
+    /// <summary>攻击被闪避时弹的字。</summary>
+    public const string MissText = "Miss";
+
     public static Color ColorOf(DamageType _type)
     {
         switch (_type)

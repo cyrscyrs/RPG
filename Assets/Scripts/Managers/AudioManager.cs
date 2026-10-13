@@ -15,6 +15,9 @@ public class AudioManager : MonoBehaviour
 
     private bool canPlaySFX;
 
+    // 普通 UI 点击音效的下标（sfx_click = 7）
+    private const int UiClickSfxIndex = 7;
+
     // 每条 BGM 的初始音量，淡出后要能复位。
     // 淡出只改 AudioSource.volume（这条 BGM 自己的音量），
     // 不碰 AudioMixer 上的全局音量参数，所以 Options 面板里的音量设置不受影响。
@@ -76,6 +79,16 @@ public class AudioManager : MonoBehaviour
     }
 
     public void StopSFX(int _index) => sfx[_index].Stop();
+
+    /// <summary>
+    /// 普通 UI 点击音效（下标 7）。菜单 / 面板的按钮统一调它，省得各处写死下标。
+    /// 这里传 null 当音源：不做距离判断，主菜单里没有玩家对象也不会报错。
+    /// </summary>
+    public static void PlayClickSfx()
+    {
+        if (instance != null)
+            instance.PlaySFX(UiClickSfxIndex, null);
+    }
 
     /// <summary>
     /// 拿到某个下标的音效片段。给需要自己控制播放/停止的地方用

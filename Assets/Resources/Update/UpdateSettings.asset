@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e699db668455f4a8ce8b599e7b4b85, type: 3}
+  m_Name: UpdateSettings
+  m_EditorClassIdentifier: 
+  manifestUrl: http://127.0.0.1:8000/version.json
+  checkInMainMenu: 1
+  menuSceneName: MainMenu
+  popupFont: {fileID: 11400000, guid: 6ecbd606233132a43a17daa69c5069fa, type: 2}
+  downloadLabel: hotfix
+  timeoutSeconds: 20
+  continueOnFailure: 1
+  showDebugOverlay: 0

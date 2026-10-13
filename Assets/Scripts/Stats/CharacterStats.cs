@@ -63,17 +63,20 @@ public class CharacterStats : MonoBehaviour
     public bool isChilled; //寒冷，减少20%护甲
     public bool isShocked; //麻痹，降低命中率
 
-    private float igniteDuration = 2;
+    // 异常状态的时长 / 系数全部从调参表取（见 Tuning）：改数值不用改代码，配成 Addressables 后还能热更。
+    // 这里写成属性而不是字段，是为了每次取值都拿「当前生效」的那份配置（包括热更下来的）。
+    private static float igniteDuration => Tuning.Config.igniteDuration;
+    private static float ignitedDamageCoolDown => Tuning.Config.igniteTickInterval;
+    private static float chillDuration => Tuning.Config.chillDuration;
+    private static float slowPercentage => Tuning.Config.chillSlowPercentage;
+    private static float shockDuration => Tuning.Config.shockDuration;
+
     private float ignitedTimer;
-    private float ignitedDamageCoolDown = .3f;
     private float ignitedDamageTimer;
     private int ignitedDamage;
 
-    private float chillDuration = 2;
     private float chilledTimer;
-    private float slowPercentage = .2f;
 
-    private float shockDuration = 4;
     private float shockedTimer;
     private int shockedDamage;
     [SerializeField] private GameObject shockStrikePrefab;
@@ -88,6 +91,16 @@ public class CharacterStats : MonoBehaviour
     [System.NonSerialized] public CharacterStats lastAttacker;
     private bool isVulnerable;
     public bool isInvincible { get; private set; }
+
+    /// <summary>
+    /// 一次攻击结算完（DoDamage 结束）时触发：第一个参数是被打的人，第二个是「有没有真的打中」
+    /// （被闪避就是 false）。Boss 的「命中附加负面效果 / 命中回血」挂在这里——
+    /// 近战、法术、爆炸这些攻击入口最后都走 DoDamage，挂一处就够了。
+    /// </summary>
+    public System.Action<CharacterStats, bool> onAttackResolved;
+
+    /// <summary>受到治疗时的倍率（1 = 正常）。减疗类负面效果会临时把它降下来。</summary>
+    [System.NonSerialized] public float healingReceivedMultiplier = 1f;
 
     protected virtual void Start()
     {
@@ -144,17 +157,23 @@ public class CharacterStats : MonoBehaviour
 
     public virtual void DoDamage(CharacterStats _targetStats)
     {
-        if (_targetStats.isInvincible) return;
+        if (_targetStats == null || _targetStats.isInvincible) return;
+
         _targetStats.lastAttacker = this;   // 记下攻击者，方便被攻击方做反弹之类
-        DoPhysicsDamage(_targetStats);
+
+        bool hit = DoPhysicsDamage(_targetStats);
         DoMagicDamage(_targetStats);
         _targetStats.GetComponent<Entity>().SetupKnockbackDir(transform);
+
+        // 攻击方自己的「命中后」效果（Boss 的负面效果 / 回血）：被闪避就不算命中
+        onAttackResolved?.Invoke(_targetStats, hit);
     }
 
-    public virtual void DoPhysicsDamage(CharacterStats _targetStats)
+    /// <summary>返回这一击有没有真的打到（被闪避返回 false）。</summary>
+    public virtual bool DoPhysicsDamage(CharacterStats _targetStats)
     {
         if (TargetCanAvoidAttack(_targetStats))
-            return;
+            return false;
 
         int totalDamage = damage.GetValue() + strength.GetValue();
         bool criticalHit = false;
@@ -175,6 +194,8 @@ public class CharacterStats : MonoBehaviour
 
         // 暴击用红色并带「！」，普通物理保持白色
         _targetStats.TakeDamage(totalDamage, criticalHit ? DamageType.Critical : DamageType.Physical);
+
+        return true;
     }
 
 
@@ -312,7 +333,10 @@ public class CharacterStats : MonoBehaviour
             _targetStats.ignitedTimer = igniteDuration;
 
             //给予敌人点燃伤害
-            _targetStats.SetupIgnitedDamage(Mathf.RoundToInt(_targetStats.maxHealth.GetValue() * .001f + fireDamage.GetValue() * .2f));
+            GameTuningConfig tuning = Tuning.Config;
+            _targetStats.SetupIgnitedDamage(Mathf.RoundToInt(
+                _targetStats.maxHealth.GetValue() * tuning.igniteMaxHealthPercent
+                + fireDamage.GetValue() * tuning.igniteFireDamageScale));
             _targetStats.fx.IgnitedFxFor(igniteDuration);
         }
         if (_chill)
@@ -325,7 +349,7 @@ public class CharacterStats : MonoBehaviour
         }
         if (_shock)
         {
-            _targetStats.SetupShockDamage(Mathf.RoundToInt(lightningDamage.GetValue() * .1f));
+            _targetStats.SetupShockDamage(Mathf.RoundToInt(lightningDamage.GetValue() * Tuning.Config.shockLightningScale));
             if (!_targetStats.isShocked)
             {
                 ApplyShock(_targetStats, _shock);
@@ -370,11 +394,12 @@ public class CharacterStats : MonoBehaviour
         float cloestDistance = Mathf.Infinity;
         Transform closestEnemy = null;
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(_targetStats.transform.position, 25);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(_targetStats.transform.position, Tuning.Config.shockStrikeSearchRadius);
 
         foreach (var hit in colliders)
         {
-            if (hit.GetComponent<Enemy>() != null && Vector2.Distance(_targetStats.transform.position, hit.transform.position) > 1)
+            if (hit.GetComponent<Enemy>() != null
+                && Vector2.Distance(_targetStats.transform.position, hit.transform.position) > Tuning.Config.shockStrikeMinDistance)
             {
                 float distanceToEnemy = Vector2.Distance(_targetStats.transform.position, hit.transform.position);
 
@@ -417,7 +442,7 @@ public class CharacterStats : MonoBehaviour
             return;
 
         if (isVulnerable)
-            _damage = Mathf.RoundToInt(_damage * 1.1f);
+            _damage = Mathf.RoundToInt(_damage * Tuning.Config.vulnerableDamageMultiplier);
         DecreaseHP_By(_damage, _type);
 
         GetComponent<Entity>().DamegedEffect();
@@ -431,6 +456,10 @@ public class CharacterStats : MonoBehaviour
     /// <summary>回血：弹出实际回上去的量（满血时不会弹）。</summary>
     public virtual void IncreaseHP_By(int _amount)
     {
+        // 减疗负面效果：收到的回复先打个折（1 = 正常）
+        if (healingReceivedMultiplier != 1f && _amount > 0)
+            _amount = Mathf.RoundToInt(_amount * healingReceivedMultiplier);
+
         int before = currentHealth;
 
         currentHealth += _amount;
@@ -472,6 +501,84 @@ public class CharacterStats : MonoBehaviour
         isDead = true;
     }
 
+    #region 受击负面效果（Boss 攻击附加）
+
+    private Coroutine attackDebuffRoutine;
+    private bool attackDebuffArmorApplied;
+    private bool attackDebuffEvasionApplied;
+    private float attackDebuffArmorMultiplier = 1f;
+    private float attackDebuffEvasionMultiplier = 1f;
+
+    /// <summary>
+    /// 挨打后挂一套负面效果：护甲 / 闪避按比例降低、受到的回复按比例降低，持续 _duration 秒。
+    ///
+    /// 同种效果不叠加：每次都是「先把旧的整套撤掉，再按固定比例挂上新的」，
+    /// 所以连续命中只是把 3 秒重新计时，数值不会越叠越低。
+    /// </summary>
+    public void ApplyAttackDebuff(float _duration, float _armorReduction, float _evasionReduction, float _healReduction)
+    {
+        ClearAttackDebuff();
+
+        if (_armorReduction > 0f)
+        {
+            attackDebuffArmorMultiplier = 1f - Mathf.Clamp01(_armorReduction);
+            armor.AddPercentModifier(attackDebuffArmorMultiplier);
+            attackDebuffArmorApplied = true;
+        }
+
+        if (_evasionReduction > 0f)
+        {
+            attackDebuffEvasionMultiplier = 1f - Mathf.Clamp01(_evasionReduction);
+            evasion.AddPercentModifier(attackDebuffEvasionMultiplier);
+            attackDebuffEvasionApplied = true;
+        }
+
+        if (_healReduction > 0f)
+            healingReceivedMultiplier = 1f - Mathf.Clamp01(_healReduction);
+
+        attackDebuffRoutine = StartCoroutine(AttackDebuffTimer(_duration));
+    }
+
+    private IEnumerator AttackDebuffTimer(float _duration)
+    {
+        yield return new WaitForSeconds(_duration);
+
+        attackDebuffRoutine = null;
+        ClearAttackDebuff();
+    }
+
+    /// <summary>把负面效果撤掉（数值恢复原状）。重复调用安全。</summary>
+    private void ClearAttackDebuff()
+    {
+        if (attackDebuffRoutine != null)
+        {
+            StopCoroutine(attackDebuffRoutine);
+            attackDebuffRoutine = null;
+        }
+
+        if (attackDebuffArmorApplied)
+        {
+            armor.RemovePercentModifier(attackDebuffArmorMultiplier);
+            attackDebuffArmorApplied = false;
+        }
+
+        if (attackDebuffEvasionApplied)
+        {
+            evasion.RemovePercentModifier(attackDebuffEvasionMultiplier);
+            attackDebuffEvasionApplied = false;
+        }
+
+        healingReceivedMultiplier = 1f;
+    }
+
+    // 对象被禁用（死亡 / 切场景）时协程会被 Unity 掉，这里兜底把数值恢复，免得半路留下减益
+    protected virtual void OnDisable()
+    {
+        ClearAttackDebuff();
+    }
+
+    #endregion
+
     #region 闪避、护甲、抗性、暴击、引燃、雷击、HP上限计算
 
     public virtual void OnEvasion(Transform _responTransform)
@@ -483,11 +590,23 @@ public class CharacterStats : MonoBehaviour
         int totalEvasion = _targetStats.evasion.GetValue() + _targetStats.agility.GetValue();
 
         if (isShocked)
-            totalEvasion += 20;
+            totalEvasion += Tuning.Config.shockEvasionBonus;
 
-        if (Random.Range(0, 100) < totalEvasion)
+        if (totalEvasion <= 0)
+            return false;
+
+        // 闪避率 = 闪避 / (常数 + 闪避)。原来是「每点闪避 = 1%」的纯线性叠加，堆到 100 点就无敌了；
+        // 换成递减曲线后每点的收益越来越低（30 点 = 50%，90 点 = 75%）
+        float dodgeChance = totalEvasion / (Tuning.Config.dodgeConstant + totalEvasion);
+
+        if (Random.value < dodgeChance)
         {
             _targetStats.OnEvasion(transform);
+
+            // 闪避成功：在被打的那个人头上弹一个「Miss」
+            if (_targetStats.fx != null)
+                _targetStats.fx.CreatePopUpText(DamageStyle.MissText, DamageStyle.MissColor);
+
             return true;
         }
 
@@ -499,21 +618,22 @@ public class CharacterStats : MonoBehaviour
         int targetArmor = _targetStats.armor.GetValue();
         if (_targetStats.isChilled)
         {
-            targetArmor = Mathf.RoundToInt(targetArmor * .8f);
+            targetArmor = Mathf.RoundToInt(targetArmor * Tuning.Config.chillArmorMultiplier);
         }
 
-        totalDamage = Mathf.RoundToInt(totalDamage * (1 - (targetArmor / (targetArmor + 50))));
+        totalDamage = Mathf.RoundToInt(totalDamage * (1 - (targetArmor / (targetArmor + Tuning.Config.armorConstant))));
         //保底伤害
-        if (totalDamage <= 0) totalDamage = 1;
+        if (totalDamage <= 0) totalDamage = Tuning.Config.minimumDamage;
         return totalDamage;
     }
 
     //魔抗减伤比例：[总魔抗] / ([总魔抗] + 66)
     protected int CheckTargetResistance(CharacterStats _targetStats, int totalMagicDamage)
     {
-        int targetResistance = _targetStats.magicResistance.GetValue() + 3 * _targetStats.intelligence.GetValue();
-        totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * (1 - (targetResistance / (targetResistance + 66))));
-        if (totalMagicDamage <= 0) totalMagicDamage = 1;
+        int targetResistance = _targetStats.magicResistance.GetValue()
+            + Tuning.Config.intelligenceMagicResistanceScale * _targetStats.intelligence.GetValue();
+        totalMagicDamage = Mathf.RoundToInt(totalMagicDamage * (1 - (targetResistance / (targetResistance + Tuning.Config.magicResistanceConstant))));
+        if (totalMagicDamage <= 0) totalMagicDamage = Tuning.Config.minimumDamage;
         return totalMagicDamage;
     }
 
@@ -529,7 +649,7 @@ public class CharacterStats : MonoBehaviour
 
     protected int CalculateCriticalDamage(int _damage)
     {
-        float totalCritPower = (critPower.GetValue() + strength.GetValue()) * .01f;
+        float totalCritPower = (critPower.GetValue() + strength.GetValue()) * Tuning.Config.critPowerScale;
 
         float critDamage = _damage * totalCritPower;
 
@@ -543,7 +663,7 @@ public class CharacterStats : MonoBehaviour
     public int GetCritPowerValue() => critPower.GetValue() + strength.GetValue();
     public int GetCrtiChanceValue() => critChance.GetValue() + agility.GetValue();
     public int GetEvasionValue() => evasion.GetValue() + agility.GetValue();
-    public int GetMagicResistance() => magicResistance.GetValue() + intelligence.GetValue() * 3;
+    public int GetMagicResistance() => magicResistance.GetValue() + intelligence.GetValue() * Tuning.Config.intelligenceMagicResistanceScale;
     #endregion
 
     public Stat GetStat(StatType _statType)

@@ -612,7 +612,7 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   intelligence:
-    baseValue: 0
+    baseValue: 70
     modifiers: 
   vitality:
     baseValue: 0
@@ -639,7 +639,7 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   fireDamage:
-    baseValue: 500
+    baseValue: 1000
     modifiers: 
   iceDamage:
     baseValue: 0
@@ -650,7 +650,7 @@ MonoBehaviour:
   isIgnited: 0
   isChilled: 0
   isShocked: 0
-  shockStrikePrefab: {fileID: 0}
+  shockStrikePrefab: {fileID: 6469953322724948848, guid: b98d3c36a6d9256419ec7193b888a61a, type: 3}
   currentHealth: 0
   soulsDropAmont:
     baseValue: 100
@@ -671,6 +671,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUpTextPrefabs: {fileID: 142384122865283388, guid: a99f2d17ddb276a48aca376c7eea3742, type: 3}
+  popUpRandomX: 1.8
+  popUpRandomY: {x: 1.6, y: 6}
   flashDuration: 0.2
   hitMat: {fileID: 2100000, guid: 96844efcc7d5d4d468d94a1091df2400, type: 2}
   chilledColor: {r: 0, g: 1, b: 0.971169, a: 1}
@@ -685,6 +687,7 @@ MonoBehaviour:
   ShockFX: {fileID: 8419034872820975752}
   hitFx: {fileID: 7751308804636864330, guid: b7c03980dd1153242aa9876d8f8fb984, type: 3}
   criticalHitFx: {fileID: 3200728745518635783, guid: efea58ac8ae60d44ea99921438f329fb, type: 3}
+  igniteSfxIndex: 4
   hideHealthBar: 0
 --- !u!114 &5620245659555298405
 MonoBehaviour:
@@ -736,6 +739,9 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 64
+  playerDetectRadius: 0.35
+  playerDetectDistance: 10
+  playerDetectHeightTolerance: 1.2
   stunDuration: 1
   stunDirection: {x: 10, y: 12}
   counterImage: {fileID: 5620245658743381257}
@@ -986,6 +992,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2261aa693c60d14497cab58ef369dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageFillColor: {r: 1, g: 0.83, b: 0.2, a: 1}
+  damageHoldTime: 0.18
+  damageDrainSpeed: 0.35
 --- !u!1001 &5620245658160770842
 PrefabInstance:
   m_ObjectHideFlags: 0

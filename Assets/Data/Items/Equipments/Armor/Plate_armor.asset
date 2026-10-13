@@ -15,6 +15,7 @@ MonoBehaviour:
   itemType: 1
   itemName: "\u666E\u901A\u62A4\u7532"
   icon: {fileID: -1581127718, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
+  itemId: ad5ba181c0b2a42488b2e838ab4cb8dd
   dropChance: 50
   equipmentType: 1
   itemCooldown: 0
@@ -33,4 +34,10 @@ MonoBehaviour:
   fireDamage: 0
   iceDamage: 0
   lightningDamage: 0
-  craftingMaterials: []
+  craftingMaterials:
+  - data: {fileID: 11400000, guid: 288542458b2c62b46be4c69e3022fc58, type: 2}
+    stackSize: 2
+  - data: {fileID: 11400000, guid: 37db200629bf8014eb03e3801a51b19f, type: 2}
+    stackSize: 2
+  growthFlatPerLevel: 2
+  growthPercentPerLevel: 0.1

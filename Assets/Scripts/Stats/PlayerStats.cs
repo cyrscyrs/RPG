@@ -142,7 +142,7 @@ public class PlayerStats : CharacterStats
     public override void DecreaseHP_By(int _damage, DamageType _type)
     {
         base.DecreaseHP_By(_damage, _type);
-        if(_damage > GetMaxHealthValue() * .3f)
+        if (_damage > GetMaxHealthValue() * Tuning.Config.playerHeavyHitHealthPercent)
         {
             player.SetupKncokbackPower(new Vector2(10, 6));
             player.fx.ScreenShake(player.fx.shake_getHighDamage);
